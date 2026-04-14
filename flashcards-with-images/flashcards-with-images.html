@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البطاقات التعليمية - كلمات ملونة التوضيحية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --primary: #FFB020; 
+            --secondary: #2C3E50; 
+            --accent: #E74C3C; 
+            --blue: #3498DB; 
+            --lucid-grey: #F4F7F9;
+            --border-default: #D5DCE0;
+            --current-letter-color: var(--primary); 
+        }
+        
+        body { 
+            font-family: 'Almarai', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            min-height: 100vh; 
+            /* خلفية زرقاء متدرجة جذابة للأطفال */
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            overflow-x: hidden;
+            transition: background-color 0.5s;
+        }
+
+        /* 🫧 حاوية الفقاعات العائمة 🫧 */
+        .floating-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* تصميم الفقاعة ثلاثية الأبعاد */
+        .floating-bg li {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            list-style: none;
+            
+            /* تأثير الزجاج/الفقاعة */
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.1));
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1), inset 0 4px 10px rgba(255, 255, 255, 0.8);
+            border-radius: 50%; /* لجعلها دائرية تماماً */
+            
+            font-family: 'Almarai', sans-serif;
+            font-weight: 800;
+            color: var(--current-letter-color);
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8); /* تظليل خفيف للنص ليبرز */
+            
+            user-select: none;
+            transition: color 0.5s;
+            bottom: -150px; /* تبدأ من أسفل الشاشة */
+            animation: floatUp linear infinite;
+        }
+
+        /* حركة صعود الفقاعات مع تمايل خفيف */
+        @keyframes floatUp {
+            0% { transform: translateY(0) translateX(0) scale(0.8); opacity: 0; }
+            10% { opacity: 1; }
+            50% { transform: translateY(-60vh) translateX(20px) scale(1.1); }
+            90% { opacity: 1; }
+            100% { transform: translateY(-120vh) translateX(-20px) scale(1.2); opacity: 0; }
+        }
+
+        /* ترويسة التطبيق */
+        .header {
+            background: rgba(255, 255, 255, 0.95); /* خلفية بيضاء شبه شفافة */
+            width: 95%;
+            max-width: 900px;
+            padding: 15px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            backdrop-filter: blur(5px);
+        }
+
+        .header h1 {
+            margin: 0;
+            color: var(--secondary);
+            font-size: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-logo {
+            height: 50px;
+            border-radius: 10px;
+            background: var(--lucid-grey);
+            padding: 5px;
+        }
+
+        .back-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Almarai';
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 0 #1a252f;
+            transition: 0.2s;
+        }
+
+        .back-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0;
+        }
+
+        /* منطقة البطاقة ثلاثية الأبعاد */
+        .scene {
+            width: 500px;
+            height: 550px;
+            perspective: 1000px;
+            margin: 40px 0 20px 0;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* ارتداد جميل عند القلب */
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card__face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 6px solid var(--current-letter-color); /* حدود أسمك قليلاً */
+            transition: border-color 0.5s;
+            background-color: white;
+            pointer-events: none;
+        }
+
+        .card__face--front { z-index: 2; }
+        .card__face--back { background-color: #fcfcfc; transform: rotateY(180deg); z-index: 1; }
+
+        .card:not(.is-flipped) .card__face--front { pointer-events: auto; z-index: 2; }
+        .card:not(.is-flipped) .card__face--back { pointer-events: none; z-index: 1; }
+        .card.is-flipped .card__face--front { pointer-events: none; z-index: 1; }
+        .card.is-flipped .card__face--back { pointer-events: auto; z-index: 2; }
+        
+        .main-letter { font-size: 260px; font-weight: 800; color: var(--secondary); margin-bottom: 30px; line-height: 1; }
+        
+        .word-image { width: 220px; height: 220px; margin-bottom: 20px; object-fit: contain; }
+        .word-text { font-size: 65px; font-weight: 800; color: var(--current-letter-color); margin-bottom: 30px; line-height: 1; transition: color 0.5s; }
+
+        .flip-hint { position: absolute; bottom: 20px; color: #95a5a6; font-size: 18px; font-weight: bold; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+        /* أزرار الصوت */
+        .sound-btn {
+            background: var(--current-letter-color);
+            border: none;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.2);
+            transition: background 0.5s, transform 0.1s, box-shadow 0.1s;
+            position: relative;
+            z-index: 10;
+        }
+
+        .sound-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 0 0 transparent;
+        }
+
+        .speaker-icon { width: 35px; height: 35px; fill: white; pointer-events: none; }
+
+        /* أزرار التنقل */
+        .nav-controls { display: flex; gap: 30px; margin-bottom: 30px; }
+        .nav-arrow {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--secondary);
+            border: none;
+            font-size: 24px;
+            font-weight: bold;
+            font-family: 'Almarai';
+            padding: 15px 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+            transition: 0.2s;
+            min-width: 140px;
+        }
+        .nav-arrow:active { transform: translateY(6px); box-shadow: 0 0 0; }
+
+        /* شبكة الحروف السريعة */
+        .letters-grid {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            max-width: 900px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            backdrop-filter: blur(5px);
+        }
+
+        .grid-btn {
+            font-family: 'Almarai';
+            font-size: 24px;
+            font-weight: bold;
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            border: 2px solid var(--border-default);
+            background: var(--lucid-grey);
+            color: var(--secondary);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .grid-btn:hover { background: #e0e6ed; }
+        .grid-btn.active {
+            background: var(--current-letter-color);
+            color: white;
+            border-color: var(--current-letter-color);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+            transition: background 0.5s, border-color 0.5s;
+        }
+
+        @media (max-width: 768px) {
+            .scene { width: 90vw; max-width: 420px; height: 500px; }
+            .main-letter { font-size: 180px; }
+            .word-text { font-size: 48px; text-align: center; padding: 0 20px; }
+            .word-image { width: 180px; height: 180px; }
+            .header { flex-direction: column; gap: 15px; text-align: center; }
+            .header h1 { font-size: 24px; }
+            .nav-controls { gap: 15px; flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<ul class="floating-bg" id="floating-letters"></ul>
+
+<div class="header">
+    <h1>
+        <img src="https://raw.githubusercontent.com/bubblesinarabic/alphabets-audio/main/logo.png" alt="شعار" class="header-logo" onerror="this.style.display='none'">
+        كلمات الحروف
+    </h1>
+    <a href="https://sites.google.com/view/alef-ba-ta-bubbles/" class="back-btn">العودة للحركات 🏠</a>
+</div>
+
+<div class="scene">
+    <div class="card" id="flashcard" onclick="flipCard(event)">
+        
+        <div class="card__face card__face--front">
+            <div class="main-letter" id="front-letter">أ</div>
+            <button type="button" class="sound-btn" onclick="playBaseAudio(event)" aria-label="تشغيل صوت الحرف">
+                <svg class="speaker-icon" viewBox="0 0 24 24">
+                    <path d="M11 5L6 9H2V15H6L11 19V5Z M15.54 8.46a5 5 0 0 1 0 7.07 M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                </svg>
+            </button>
+            <div class="flip-hint">👆 اضغط للقلب</div>
+        </div>
+
+        <div class="card__face card__face--back">
+            <img id="word-image" class="word-image" src="" alt="صورة توضيحية">
+            <div id="word-text" class="word-text">أَسَد</div>
+            
+            <button type="button" class="sound-btn" onclick="playWordAudio(event)" aria-label="تشغيل صوت الكلمة">
+                <svg class="speaker-icon" viewBox="0 0 24 24">
+                    <path d="M11 5L6 9H2V15H6L11 19V5Z M15.54 8.46a5 5 0 0 1 0 7.07 M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                </svg>
+            </button>
+            
+            <div class="flip-hint" style="bottom: 10px;">👆 اضغط للرجوع</div>
+        </div>
+    </div>
+</div>
+
+<div class="nav-controls">
+    <button type="button" class="nav-arrow" onclick="prevCard(event)">◀ السابق</button>
+    <button type="button" class="nav-arrow" onclick="nextCard(event)">التالي ▶</button>
+</div>
+
+<div class="letters-grid" id="letters-grid"></div>
+
+<script>
+    const RAW_URL = "https://raw.githubusercontent.com/bubblesinarabic/alphabets-audio/main/";
+
+    // 🌟 رابط صوت التقليب الجديد والموثوق (من Mixkit) 🌟
+    const flipSoundUrl = "https://assets.mixkit.co/sfx/preview/mixkit-fast-small-swipe-transition-166.mp3";
+    const flipAudio = new Audio(flipSoundUrl);
+
+    const letterData = [
+        { char: 'أ', baseAudio: 'alif.mp3', word: 'أَسَد', wordAudio: 'asad.mp3', openMoji: '1F981', color: '#E74C3C' },
+        { char: 'ب', baseAudio: 'baa.mp3', word: 'بَقَرَة', wordAudio: 'baqarah.mp3', openMoji: '1F404', color: '#3498DB' },
+        { char: 'ت', baseAudio: 'taa.mp3', word: 'تُفَّاحَة', wordAudio: 'tuffahah.mp3', openMoji: '1F34E', color: '#27AE60' },
+        { char: 'ث', baseAudio: 'thaa.mp3', word: 'ثَعْلَب', wordAudio: 'thalab.mp3', openMoji: '1F98A', color: '#F39C12' },
+        { char: 'ج', baseAudio: 'jeem.mp3', word: 'جَبَل', wordAudio: 'jabal.mp3', openMoji: '26F0', color: '#8E44AD' },
+        { char: 'ح', baseAudio: 'haa.mp3', word: 'حِذَاء', wordAudio: 'hithaa.mp3', openMoji: '1F45E', color: '#16A085' },
+        { char: 'خ', baseAudio: 'khaa.mp3', word: 'خَوْخ', wordAudio: 'khawkh.mp3', openMoji: '1F351', color: '#D35400' },
+        { char: 'د', baseAudio: 'dal.mp3', word: 'دُبّ', wordAudio: 'dubb.mp3', openMoji: '1F43B', color: '#2C3E50' },
+        { char: 'ذ', baseAudio: 'thaal.mp3', word: 'ذِئْب', wordAudio: 'theeb.mp3', openMoji: '1F43A', color: '#F1C40F' },
+        { char: 'ر', baseAudio: 'raa.mp3', word: 'رُمَّان', wordAudio: 'rumman.mp3', openMoji: '1F345', color: '#E74C3C' },
+        { char: 'ز', baseAudio: 'zay.mp3', word: 'زَرَافَة', wordAudio: 'zarafa.mp3', openMoji: '1F992', color: '#E67E22' },
+        { char: 'س', baseAudio: 'seen.mp3', word: 'سَمَكَة', wordAudio: 'samakah.mp3', openMoji: '1F41F', color: '#3498DB' },
+        { char: 'ش', baseAudio: 'sheen.mp3', word: 'شَجَرَة', wordAudio: 'shajarah.mp3', openMoji: '1F333', color: '#27AE60' },
+        { char: 'ص', baseAudio: 'saad.mp3', word: 'صَارُوخ', wordAudio: 'sarookh.mp3', openMoji: '1F680', color: '#E74C3C' },
+        { char: 'ض', baseAudio: 'daad.mp3', word: 'ضِفْدَع', wordAudio: 'difdaa.mp3', openMoji: '1F438', color: '#2ECC71' },
+        { char: 'ط', baseAudio: 'taa_heavy.mp3', word: 'طَائِرَة', wordAudio: 'taera.mp3', openMoji: '2708', color: '#2980B9' },
+        { char: 'ظ', baseAudio: 'zaa_heavy.mp3', word: 'ظَرْف', wordAudio: 'tharf.mp3', openMoji: '2709', color: '#D35400' },
+        { char: 'ع', baseAudio: 'ayn.mp3', word: 'عُصْفُور', wordAudio: 'usfour.mp3', openMoji: '1F426', color: '#3498DB' },
+        { char: 'غ', baseAudio: 'ghayn.mp3', word: 'غَزَال', wordAudio: 'ghazal.mp3', openMoji: '1F98C', color: '#A04000' },
+        { char: 'ف', baseAudio: 'faa.mp3', word: 'فِيل', wordAudio: 'feel.mp3', openMoji: '1F418', color: '#7F8C8D' },
+        { char: 'ق', baseAudio: 'qaaf.mp3', word: 'قَلَم', wordAudio: 'qalam.mp3', openMoji: '2712', color: '#E67E22' },
+        { char: 'ك', baseAudio: 'kaaf.mp3', word: 'كِتَاب', wordAudio: 'kitab.mp3', openMoji: '1F4D6', color: '#8E44AD' },
+        { char: 'ل', baseAudio: 'laam.mp3', word: 'لَيْمُون', wordAudio: 'laymoon.mp3', openMoji: '1F34B', color: '#F1C40F' },
+        { char: 'م', baseAudio: 'meem.mp3', word: 'مَوْز', wordAudio: 'mawz.mp3', openMoji: '1F34C', color: '#F1C40F' },
+        { char: 'ن', baseAudio: 'noon.mp3', word: 'نَهْر', wordAudio: 'nahr.mp3', openMoji: '1F30A', color: '#3498DB' },
+        { char: 'هـ', baseAudio: 'haa_light.mp3', word: 'هَدِيَّة', wordAudio: 'hadiyya.mp3', openMoji: '1F381', color: '#E74C3C' },
+        { char: 'و', baseAudio: 'waw.mp3', word: 'وَرْدَة', wordAudio: 'warda.mp3', openMoji: '1F339', color: '#C0392B' },
+        { char: 'ي', baseAudio: 'yaa.mp3', word: 'يَد', wordAudio: 'yad.mp3', openMoji: '270B', color: '#E67E22' }
+    ];
+
+    let currentIndex = 0;
+    let currentAudioPlayer = null;
+
+    function buildGrid() {
+        const grid = document.getElementById('letters-grid');
+        grid.innerHTML = '';
+
+        letterData.forEach((item, index) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `grid-btn ${index === currentIndex ? 'active' : ''}`;
+            btn.innerText = item.char;
+            btn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                goToCard(index);
+            });
+            grid.appendChild(btn);
+        });
+    }
+
+    function updateCardUI() {
+        const data = letterData[currentIndex];
+        const card = document.getElementById('flashcard');
+
+        document.documentElement.style.setProperty('--current-letter-color', data.color);
+
+        if (card.classList.contains('is-flipped')) {
+            card.classList.remove('is-flipped');
+            setTimeout(applyData, 300);
+        } else {
+            applyData();
+        }
+
+        function applyData() {
+            document.getElementById('front-letter').innerText = data.char;
+            document.getElementById('word-text').innerText = data.word;
+
+            const openMojiUrl = "https://openmoji.org/data/color/svg/" + data.openMoji + ".svg";
+            document.getElementById('word-image').src = openMojiUrl;
+
+            // 🫧 إنشاء الفقاعات العشوائية 🫧
+            const floatingLetters = document.getElementById('floating-letters');
+            floatingLetters.innerHTML = '';
+
+            for (let i = 0; i < 8; i++) { // زدت عدد الفقاعات إلى 8 لتكون أجمل
+                const li = document.createElement('li');
+                li.innerText = data.char;
+                
+                // أحجام فقاعات عشوائية بين 40 و 100 بكسل
+                const size = Math.floor(Math.random() * 60) + 40; 
+                li.style.width = size + "px";
+                li.style.height = size + "px";
+                li.style.fontSize = (size * 0.45) + "px"; // حجم الخط متناسب مع الفقاعة
+                
+                li.style.left = (Math.random() * 90) + "%";
+                li.style.animationDelay = (Math.random() * 5) + "s";
+                li.style.animationDuration = (Math.random() * 10 + 15) + "s"; // سرعات صعود مختلفة
+                
+                floatingLetters.appendChild(li);
+            }
+        }
+
+        document.querySelectorAll('.grid-btn').forEach((btn, idx) => {
+            btn.classList.toggle('active', idx === currentIndex);
+        });
+    }
+
+    function stopCurrentAudio() {
+        if (currentAudioPlayer) {
+            currentAudioPlayer.pause();
+            currentAudioPlayer.currentTime = 0;
+            currentAudioPlayer = null;
+        }
+    }
+
+    function playAudioUrl(url) {
+        stopCurrentAudio();
+        const audio = new Audio(url + "?v=" + Date.now());
+        currentAudioPlayer = audio;
+        audio.play().catch(err => {
+            console.error("Audio failed to play:", url, err);
+        });
+    }
+
+    function playBaseAudio(event) {
+        event.stopPropagation();
+        const data = letterData[currentIndex];
+        playAudioUrl(RAW_URL + data.baseAudio);
+    }
+
+    function playWordAudio(event) {
+        event.stopPropagation();
+        const data = letterData[currentIndex];
+        playAudioUrl(RAW_URL + data.wordAudio);
+    }
+
+    function nextCard(event) {
+        if (event) event.stopPropagation();
+        currentIndex = (currentIndex + 1) % letterData.length;
+        updateCardUI();
+    }
+
+    function prevCard(event) {
+        if (event) event.stopPropagation();
+        currentIndex = (currentIndex - 1 + letterData.length) % letterData.length;
+        updateCardUI();
+    }
+
+    function goToCard(index) {
+        if (currentIndex === index) return;
+        currentIndex = index;
+        updateCardUI();
+    }
+
+    function flipCard(event) {
+        if (event) event.stopPropagation();
+        
+        // 🎵 تشغيل صوت التقليب السريع 🎵
+        flipAudio.currentTime = 0;
+        flipAudio.play().catch(err => console.log("تعذر تشغيل صوت التقليب:", err));
+        
+        document.getElementById('flashcard').classList.toggle('is-flipped');
+    }
+
+    window.onload = () => {
+        buildGrid();
+        updateCardUI();
+    };
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') nextCard();
+        if (e.key === 'ArrowRight') prevCard();
+        if (e.key === ' ') {
+            e.preventDefault();
+            flipCard();
+        }
+    });
+</script>
+</body>
+</html>
