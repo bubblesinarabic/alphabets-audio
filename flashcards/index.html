@@ -15,14 +15,8 @@
             --purple: #9B59B6;
             --lucid-grey: #F4F7F9;
             --border: #D5DCE0;
-            --card-shadow: 0 15px 35px rgba(0,0,0,0.18);
-            --soft-shadow: 0 10px 20px rgba(0,0,0,0.10);
         }
         
-        * {
-            box-sizing: border-box;
-        }
-
         body { 
             font-family: 'Almarai', sans-serif; 
             margin: 0; 
@@ -35,243 +29,35 @@
         }
 
         /* الخلفية المتحركة */
-        .floating-bg { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100vw; 
-            height: 100vh; 
-            z-index: -1; 
-            background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%); 
-            overflow: hidden; 
-            margin: 0; 
-            padding: 0; 
-        }
-
-        .floating-bg li { 
-            position: absolute; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            list-style: none; 
-            background: rgba(255, 255, 255, 0.25); 
-            animation: floatUp 25s linear infinite; 
-            bottom: -150px; 
-            border-radius: 25%; 
-            font-family: 'Almarai', sans-serif; 
-            font-weight: 800; 
-            color: rgba(255, 255, 255, 0.7); 
-            user-select: none; 
-        }
-
+        .floating-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%); overflow: hidden; margin: 0; padding: 0; }
+        .floating-bg li { position: absolute; display: flex; justify-content: center; align-items: center; list-style: none; background: rgba(255, 255, 255, 0.25); animation: floatUp 25s linear infinite; bottom: -150px; border-radius: 25%; font-family: 'Almarai', sans-serif; font-weight: 800; color: rgba(255, 255, 255, 0.7); user-select: none; }
         .floating-bg li:nth-child(1) { left: 10%; width: 80px; height: 80px; animation-delay: 0s; font-size: 40px; }
         .floating-bg li:nth-child(2) { left: 25%; width: 60px; height: 60px; animation-delay: 2s; animation-duration: 12s; font-size: 30px; }
         .floating-bg li:nth-child(3) { left: 70%; width: 100px; height: 100px; animation-delay: 4s; font-size: 55px; }
         .floating-bg li:nth-child(4) { left: 40%; width: 70px; height: 70px; animation-delay: 0s; animation-duration: 18s; font-size: 35px; }
         .floating-bg li:nth-child(5) { left: 65%; width: 50px; height: 50px; animation-delay: 0s; font-size: 25px; }
+        @keyframes floatUp { 0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 25%; } 100% { transform: translateY(-120vh) rotate(720deg); opacity: 0; border-radius: 50%; } }
 
-        @keyframes floatUp { 
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 25%; } 
-            100% { transform: translateY(-120vh) rotate(720deg); opacity: 0; border-radius: 50%; } 
-        }
+        /* ترويسة التطبيق */
+        .header { background: #ffffff; width: 95%; max-width: 900px; padding: 15px 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 20px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
+        .header h1 { margin: 0; color: var(--secondary); font-size: 30px; display: flex; align-items: center; gap: 15px; }
+        .header-logo { height: 50px; border-radius: 10px; background: var(--lucid-grey); padding: 5px; }
+        .back-btn { background: var(--accent); color: white; border: none; padding: 10px 20px; font-family: 'Almarai'; font-size: 18px; font-weight: bold; border-radius: 12px; cursor: pointer; text-decoration: none; box-shadow: 0 4px 0 #c0392b; }
+        .back-btn:active { transform: translateY(4px); box-shadow: 0 0 0; }
 
-        /* الشريط العلوي + التنقل */
-        .top-shell {
-            width: 95%;
-            max-width: 1100px;
-            margin-top: 20px;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-        }
-
-        .top-bar {
-            background: var(--primary);
-            color: white;
-            padding: 18px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .brand-wrap {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 26px;
-            font-weight: 800;
-        }
-
-        .brand-wrap svg {
-            width: 28px;
-            height: 28px;
-            stroke-width: 2.4;
-        }
-
-        .top-bar small {
-            font-size: 16px;
-            font-weight: 700;
-            opacity: 0.95;
-        }
-
-        .nav-menu {
-            display: flex;
-            background: var(--secondary);
-            overflow-x: auto;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .nav-menu::-webkit-scrollbar {
-            height: 5px;
-        }
-
-        .nav-menu::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.25);
-            border-radius: 5px;
-        }
-
-        .nav-link {
-            flex: 1;
-            min-width: 165px;
-            text-align: center;
-            padding: 16px 12px;
-            color: #d4dde4;
-            text-decoration: none;
-            font-size: 17px;
-            font-weight: 700;
-            white-space: nowrap;
-            transition: 0.25s ease;
-            border-bottom: 5px solid transparent;
-        }
-
-        .nav-link:hover {
-            background: rgba(255,255,255,0.08);
-            color: #fff;
-        }
-
-        .nav-link.active {
-            border-bottom-color: var(--primary);
-            color: #fff;
-            background: rgba(255,255,255,0.06);
-        }
-
-        .nav-link .nav-inner {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .nav-link svg {
-            width: 18px;
-            height: 18px;
-            stroke-width: 2.2;
-        }
-
-        /* ترويسة الصفحة */
-        .header { 
-            background: #ffffff; 
-            width: 95%; 
-            max-width: 900px; 
-            padding: 15px 30px; 
-            border-radius: 20px; 
-            box-shadow: var(--soft-shadow); 
-            margin-top: 18px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            gap: 16px;
-        }
-
-        .header h1 { 
-            margin: 0; 
-            color: var(--secondary); 
-            font-size: 30px; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-        }
-
-        .header-logo { 
-            height: 50px; 
-            border-radius: 10px; 
-            background: var(--lucid-grey); 
-            padding: 5px; 
-        }
-
-        .header-note {
-            background: var(--lucid-grey);
-            color: var(--secondary);
-            padding: 10px 16px;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        /* منطقة البطاقة ثلاثية الأبعاد */
-        .scene { 
-            width: 500px; 
-            height: 550px; 
-            perspective: 1000px; 
-            margin: 32px 0 20px 0; 
-        }
-
-        .card { 
-            width: 100%; 
-            height: 100%; 
-            position: relative; 
-            transition: transform 0.8s; 
-            transform-style: preserve-3d; 
-            cursor: pointer; 
-        }
-
-        .card.is-flipped { 
-            transform: rotateY(180deg); 
-        }
-
-        .card__face { 
-            position: absolute; 
-            width: 100%; 
-            height: 100%; 
-            backface-visibility: hidden; 
-            -webkit-backface-visibility: hidden; 
-            border-radius: 30px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            border: 4px solid var(--border); 
-        }
-
-        .card__face--front { 
-            background-color: #ffffff; 
-            z-index: 2; 
-            transform: rotateY(0deg); 
-        }
-
-        .card__face--back { 
-            background-color: #F8FAFC; 
-            transform: rotateY(180deg); 
-        }
+        /* منطقة البطاقة ثلاثية الأبعاد - الحجم الأكبر */
+        .scene { width: 500px; height: 550px; perspective: 1000px; margin: 40px 0 20px 0; }
+        .card { width: 100%; height: 100%; position: relative; transition: transform 0.8s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card__face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; border: 4px solid var(--border); }
+        .card__face--front { background-color: #ffffff; z-index: 2; transform: rotateY(0deg); }
+        .card__face--back { background-color: #F8FAFC; transform: rotateY(180deg); }
         
-        .main-letter { 
-            font-size: 240px; 
-            font-weight: 800; 
-            color: var(--secondary); 
-            margin-bottom: 30px; 
-            line-height: 1; 
-        }
-
-        .haraka-row { 
-            display: flex; 
-            justify-content: space-evenly; 
-            width: 100%; 
-            padding: 0 10px; 
-        }
+        /* محتوى البطاقة */
+        .main-letter { font-size: 240px; font-weight: 800; color: var(--secondary); margin-bottom: 30px; line-height: 1; }
+        .haraka-row { display: flex; justify-content: space-evenly; width: 100%; padding: 0 10px; box-sizing: border-box; }
         
+        /* الصناديق الواسعة لمنع قص الحروف */
         .haraka-box { 
             display: flex; 
             flex-direction: column; 
@@ -292,137 +78,30 @@
             line-height: 1.2; 
         }
         
-        .flip-hint { 
-            position: absolute; 
-            bottom: 20px; 
-            color: #95a5a6; 
-            font-size: 18px; 
-            font-weight: bold; 
-            animation: pulse 2s infinite; 
-        }
-
-        @keyframes pulse { 
-            0% { opacity: 0.5; } 
-            50% { opacity: 1; } 
-            100% { opacity: 0.5; } 
-        }
+        .flip-hint { position: absolute; bottom: 20px; color: #95a5a6; font-size: 18px; font-weight: bold; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
         /* أزرار الصوت */
-        .sound-btn { 
-            background: var(--primary); 
-            border: none; 
-            border-radius: 50%; 
-            width: 50px; 
-            height: 50px; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            box-shadow: 0 4px 0 #d99519; 
-            transition: 0.2s; 
-            position: relative; 
-            z-index: 10; 
-        }
-
-        .sound-btn:active { 
-            transform: translateY(4px); 
-            box-shadow: 0 0 0; 
-        }
-
-        .sound-btn.small { 
-            width: 45px; 
-            height: 45px; 
-            box-shadow: 0 3px 0 #d99519; 
-        }
-
-        .sound-btn.small:active { 
-            transform: translateY(3px); 
-            box-shadow: 0 0 0; 
-        }
+        .sound-btn { background: var(--primary); border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #d99519; transition: 0.2s; position: relative; z-index: 10; }
+        .sound-btn:active { transform: translateY(4px); box-shadow: 0 0 0; }
+        .sound-btn.small { width: 45px; height: 45px; box-shadow: 0 3px 0 #d99519; } 
+        .sound-btn.small:active { transform: translateY(3px); box-shadow: 0 0 0; }
         
-        .speaker-icon { 
-            width: 25px; 
-            height: 25px; 
-            fill: white; 
-            pointer-events: none; 
-        }
+        .speaker-icon { width: 25px; height: 25px; fill: white; pointer-events: none; }
+        .small .speaker-icon { width: 22px; height: 22px; pointer-events: none; }
 
-        .small .speaker-icon { 
-            width: 22px; 
-            height: 22px; 
-            pointer-events: none; 
-        }
+        /* أزرار التنقل */
+        .nav-controls { display: flex; gap: 30px; margin-bottom: 30px; }
+        .nav-arrow { background: var(--secondary); color: white; border: none; font-size: 24px; font-weight: bold; font-family: 'Almarai'; padding: 15px 30px; border-radius: 15px; cursor: pointer; box-shadow: 0 6px 0 #1a252f; transition: 0.2s; min-width: 140px; }
+        .nav-arrow:active { transform: translateY(6px); box-shadow: 0 0 0; }
 
-        /* أزرار التنقل داخل البطاقات */
-        .nav-controls { 
-            display: flex; 
-            gap: 30px; 
-            margin-bottom: 30px; 
-        }
+        /* شبكة الحروف السريعة */
+        .letters-grid { background: white; padding: 20px; border-radius: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 900px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .grid-btn { font-family: 'Almarai'; font-size: 24px; font-weight: bold; width: 55px; height: 55px; border-radius: 12px; border: 2px solid var(--border); background: var(--lucid-grey); color: var(--secondary); cursor: pointer; transition: 0.2s; }
+        .grid-btn:hover { background: var(--blue); color: white; border-color: var(--blue); }
+        .grid-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 0 #d99519; transform: translateY(-4px); }
 
-        .nav-arrow { 
-            background: var(--secondary); 
-            color: white; 
-            border: none; 
-            font-size: 24px; 
-            font-weight: bold; 
-            font-family: 'Almarai'; 
-            padding: 15px 30px; 
-            border-radius: 15px; 
-            cursor: pointer; 
-            box-shadow: 0 6px 0 #1a252f; 
-            transition: 0.2s; 
-            min-width: 140px; 
-        }
-
-        .nav-arrow:active { 
-            transform: translateY(6px); 
-            box-shadow: 0 0 0; 
-        }
-
-        /* شبكة الحروف */
-        .letters-grid { 
-            background: white; 
-            padding: 20px; 
-            border-radius: 20px; 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            gap: 10px; 
-            max-width: 900px; 
-            box-shadow: var(--soft-shadow); 
-            margin-bottom: 30px; 
-        }
-
-        .grid-btn { 
-            font-family: 'Almarai'; 
-            font-size: 24px; 
-            font-weight: bold; 
-            width: 55px; 
-            height: 55px; 
-            border-radius: 12px; 
-            border: 2px solid var(--border); 
-            background: var(--lucid-grey); 
-            color: var(--secondary); 
-            cursor: pointer; 
-            transition: 0.2s; 
-        }
-
-        .grid-btn:hover { 
-            background: var(--blue); 
-            color: white; 
-            border-color: var(--blue); 
-        }
-
-        .grid-btn.active { 
-            background: var(--primary); 
-            color: white; 
-            border-color: var(--primary); 
-            box-shadow: 0 4px 0 #d99519; 
-            transform: translateY(-4px); 
-        }
-
-        /* رسالة التنبيه */
+        /* رسالة التنبيه (Toast) */
         #toast {
             visibility: hidden;
             min-width: 250px;
@@ -441,104 +120,12 @@
             font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-
         #toast.show {
             visibility: visible;
             animation: fadein 0.5s, fadeout 0.5s 2.5s;
         }
-
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-
-        @media (max-width: 980px) {
-            .top-shell,
-            .header {
-                width: 94%;
-            }
-
-            .scene {
-                width: min(92vw, 500px);
-                height: 540px;
-            }
-        }
-
-        @media (max-width: 700px) {
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .header-note {
-                white-space: normal;
-            }
-
-            .nav-controls {
-                gap: 16px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .nav-arrow {
-                min-width: 130px;
-                font-size: 20px;
-                padding: 14px 20px;
-            }
-
-            .haraka-row {
-                gap: 8px;
-                padding: 0 6px;
-            }
-
-            .haraka-box {
-                min-width: 90px;
-                padding: 20px 12px;
-            }
-
-            .haraka-letter {
-                font-size: 56px;
-            }
-
-            .main-letter {
-                font-size: 190px;
-            }
-        }
-
-        @media (max-width: 560px) {
-            .brand-wrap {
-                font-size: 22px;
-            }
-
-            .nav-link {
-                min-width: 145px;
-                font-size: 15px;
-            }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .scene {
-                height: 500px;
-            }
-
-            .main-letter {
-                font-size: 160px;
-            }
-
-            .haraka-letter {
-                font-size: 48px;
-            }
-
-            .letters-grid {
-                padding: 16px;
-            }
-
-            .grid-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 22px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -547,66 +134,12 @@
     <li>أ</li><li>ب</li><li>ت</li><li>ث</li><li>ج</li><li>ح</li><li>خ</li><li>د</li><li>ذ</li><li>ر</li>
 </ul>
 
-<div class="top-shell">
-    <div class="top-bar">
-        <span class="brand-wrap">
-            <i data-lucide="book-open"></i>
-            <span>أبطال الحروف</span>
-        </span>
-        <small>وحدة البطاقات التعليمية</small>
-    </div>
-
-    <nav class="nav-menu">
-        <a class="nav-link" href="../">
-            <span class="nav-inner">
-                <i data-lucide="house"></i>
-                <span>الرئيسية</span>
-            </span>
-        </a>
-
-        <a class="nav-link" href="../flashcards-with-images/">
-            <span class="nav-inner">
-                <i data-lucide="images"></i>
-                <span>بطاقات بالصور</span>
-            </span>
-        </a>
-
-        <a class="nav-link active" href="../flashcards/">
-            <span class="nav-inner">
-                <i data-lucide="book-open"></i>
-                <span>البطاقات</span>
-            </span>
-        </a>
-
-        <a class="nav-link" href="../games/">
-            <span class="nav-inner">
-                <i data-lucide="gamepad-2"></i>
-                <span>الألعاب</span>
-            </span>
-        </a>
-
-        <a class="nav-link" href="../let-learn-together-games/">
-            <span class="nav-inner">
-                <i data-lucide="users"></i>
-                <span>لنتعلم معًا</span>
-            </span>
-        </a>
-
-        <a class="nav-link" href="../letter-groups/">
-            <span class="nav-inner">
-                <i data-lucide="brain"></i>
-                <span>مجموعات الحروف</span>
-            </span>
-        </a>
-    </nav>
-</div>
-
 <div class="header">
     <h1>
         <img src="https://raw.githubusercontent.com/bubblesinarabic/alphabets-audio/main/logo.png" alt="شعار" class="header-logo" onerror="this.style.display='none'">
         البطاقات التعليمية
     </h1>
-    <div class="header-note">اقلب البطاقة واستمع إلى الحركات</div>
+    <a href="index.html" class="back-btn">العودة للألعاب 🏠</a>
 </div>
 
 <div class="scene">
@@ -658,11 +191,12 @@
 <script>
     const RAW_URL = "https://raw.githubusercontent.com/bubblesinarabic/alphabets-audio/main/";
     
+    // تم ترتيب الحروف وإضافة استثناء الثاء بنجاح
     const letterData = [
         { char: 'أ', name: 'alif' }, 
         { char: 'ب', name: 'baa' }, 
         { char: 'ت', name: 'taa' }, 
-        { char: 'ث', name: 'thaa', customUrls: { damma: RAW_URL + 'thou-damma.mp3' } },
+        { char: 'ث', name: 'thaa', customUrls: { damma: RAW_URL + 'thou-damma.mp3' } }, // تمت إعادة إضافة الاستثناء هنا!
         { char: 'ج', name: 'jeem' }, { char: 'ح', name: 'haa' }, { char: 'خ', name: 'kha' }, { char: 'د', name: 'dal' },
         { char: 'ذ', name: 'thaal' }, { char: 'ر', name: 'raa' }, { char: 'ز', name: 'zay' }, { char: 'س', name: 'seen' },
         { char: 'ش', name: 'sheen' }, { char: 'ص', name: 'saad' }, { char: 'ض', name: 'daad' }, 
@@ -716,13 +250,16 @@
     function goToCard(index) { if(currentIndex === index) return; currentIndex = index; updateCardUI(); }
     function flipCard() { document.getElementById('flashcard').classList.toggle('is-flipped'); }
 
+    // دالة إظهار التنبيه
     function showToast() {
         var toast = document.getElementById("toast");
         toast.className = "show";
         setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
     }
 
+    // دالة تشغيل الرابط المباشر مع "كسر الكاش"
     function playAudioUrl(url) {
+        // إضافة وقت اللحظة الحالية في نهاية الرابط لضمان جلب النسخة الأحدث
         const cacheBuster = "?v=" + new Date().getTime();
         audioPlayer.src = url + cacheBuster;
         
@@ -763,11 +300,6 @@
         if(e.key === 'ArrowRight') prevCard();
         if(e.key === ' ') { e.preventDefault(); flipCard(); }
     });
-</script>
-
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>
-    lucide.createIcons();
 </script>
 </body>
 </html>
