@@ -31,7 +31,6 @@
       min-height: 100vh;
     }
 
-    /* --- تنسيقات الخلفية المتحركة (الفقاعات) --- */
     .bg-bubbles {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
       z-index: -1; overflow: hidden; margin: 0; padding: 0; pointer-events: none;
@@ -53,8 +52,46 @@
       max-width: 900px; margin: 0 auto 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     }
 
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .header-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 250px;
+    }
+
     h1 { color: #1565c0; margin: 0 0 5px 0; font-weight: 800; font-size: 24px; }
-    .subtitle { color: #7f8c8d; font-size: 14px; margin-bottom: 15px; font-weight: bold; }
+    .subtitle { color: #7f8c8d; font-size: 14px; margin-bottom: 0; font-weight: bold; }
+
+    .back-btn {
+      background: var(--secondary);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-family: 'Almarai', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 0 #1a252f;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+
+    .back-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0;
+    }
 
     .nav-tabs { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
 
@@ -111,7 +148,6 @@
     }
     .score-board .en { display: block; font-size: 12px; font-weight: normal; }
 
-    /* --- تلميح النطق (Transliteration Hint) --- */
     .hint-text {
       font-size: 16px;
       color: #7f8c8d;
@@ -127,10 +163,9 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       border: 1px dashed #bdc3c7;
       margin-top: -10px;
-      direction: ltr; /* لضمان ظهور النص الإنجليزي بشكل سليم */
+      direction: ltr;
     }
 
-    /* --- تنسيقات الألعاب --- */
     #unscramble-area { position: absolute; top: 70px; bottom: 0; left: 0; right: 0; background: #fff3e0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
     .word-image { width: 100px; height: 100px; font-size: 70px; line-height: 100px; background: #fff; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: flex; justify-content: center; align-items: center; }
     .answer-slots, .scrambled-letters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; direction: rtl; }
@@ -190,7 +225,6 @@
     .ctrl-btn i.lucide { width: 24px; height: 24px; }
     .ctrl-btn:active { transform: translateY(4px); box-shadow: none; }
 
-    /* --- قسم الشهادة --- */
     #certificate-game {
       background: #f8f9fa; overflow-y: auto; height: 100%; padding-bottom: 20px;
     }
@@ -257,6 +291,21 @@
     .idle-content h2 { color: var(--secondary); margin-top: 0; font-size: 30px; font-weight: 800; }
     .idle-content .en-text { color: #7f8c8d; font-size: 18px; margin-bottom: 30px; font-weight: bold; }
     .idle-btns { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+
+    @media (max-width: 700px) {
+      .header-top {
+        flex-direction: column;
+      }
+
+      .header-brand {
+        min-width: auto;
+      }
+
+      .back-btn {
+        font-size: 14px;
+        padding: 9px 14px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -264,8 +313,14 @@
   <ul class="bg-bubbles" id="bg-bubbles-container"></ul>
 
   <div class="header">
-    <h1>ألعاب الحروف التفاعلية 🎮</h1>
-    <div class="subtitle">Interactive Arabic Letters Games</div>
+    <div class="header-top">
+      <div class="header-brand">
+        <h1>ألعاب الحروف التفاعلية 🎮</h1>
+        <div class="subtitle">Interactive Arabic Letters Games</div>
+      </div>
+      <a href="/alphabets-audio/" class="back-btn">العودة للصفحة الرئيسية 🏠</a>
+    </div>
+
     <div class="nav-tabs">
       <button class="tab-btn" onclick="switchGame('bubble')"><i data-lucide="droplet"></i> الفقاعات <span class="en">Bubbles</span></button>
       <button class="tab-btn airplane-btn" onclick="switchGame('airplane')"><i data-lucide="plane"></i> الطائرة <span class="en">Airplane</span></button>
@@ -383,18 +438,17 @@
   <script>
     const letters = ['أ','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ك','ل','م','ن','ه','و','ي'];
     
-    // المفردات مع إضافة التلميح الصوتي (Transliteration)
     const advancedVocab = [
       { word: "أرنب", emoji: "🐰", missing: "أ", display: "_َرْنَب", options: ["أ", "إ", "ا"], trans: "Arnab" },
-      { word: "بطة", emoji: "🦆", missing: "ب", display: "_َطَّة", options: ["ب", "ت", "ث"], trans: "Batta" },
-      { word: "تفاحة", emoji: "🍎", missing: "ت", display: "_ُفَّاحَة", options: ["ت", "ب", "ث"], trans: "Tuffaha" },
+      { word: "بطة", emoji: "🦆", missing: "ب", display: "_َطَّة", options: ["ب", "ت", "ث"], trans: "Batta" },
+      { word: "تفاحة", emoji: "🍎", missing: "ت", display: "_ُفَّاحَة", options: ["ت", "ب", "ث"], trans: "Tuffaha" },
       { word: "ثعلب", emoji: "🦊", missing: "ث", display: "_َعْلَب", options: ["ث", "ت", "ب"], trans: "Thalab" },
       { word: "جمل", emoji: "🐪", missing: "ج", display: "_َمَل", options: ["ج", "ح", "خ"], trans: "Jamal" },
       { word: "حصان", emoji: "🐴", missing: "ح", display: "_ِصَان", options: ["ح", "ج", "خ"], trans: "Hisan" },
       { word: "خروف", emoji: "🐑", missing: "خ", display: "_َرُوف", options: ["خ", "ح", "ج"], trans: "Kharouf" },
       { word: "دجاجة", emoji: "🐔", missing: "د", display: "_َجَاجَة", options: ["د", "ذ", "ر"], trans: "Dajaja" },
       { word: "ذرة", emoji: "🌽", missing: "ذ", display: "_ُرَة", options: ["ذ", "د", "ز"], trans: "Thura" },
-      { word: "رمان", emoji: "<img src='https://raw.githubusercontent.com/bubblesinarabic/alphabets-audio/main/pomegranate.svg' style='height: 1.2em; vertical-align: middle;' alt='رمان'>", missing: "ر", display: "_ُمَّان", options: ["ر", "ز", "د"], trans: "Rumman" },
+      { word: "رمان", emoji: "<img src='https://raw.githubusercontent.com/bubblesinarabic/alphabets-audio/main/pomegranate.svg' style='height: 1.2em; vertical-align: middle;' alt='رمان'>", missing: "ر", display: "_ُمَّان", options: ["ر", "ز", "د"], trans: "Rumman" },
       { word: "زرافة", emoji: "🦒", missing: "ز", display: "_َرَافَة", options: ["ز", "ر", "ذ"], trans: "Zarafa" },
       { word: "سمكة", emoji: "🐟", missing: "س", display: "_َمَكَة", options: ["س", "ش", "ص"], trans: "Samaka" },
       { word: "شمس", emoji: "☀️", missing: "ش", display: "_َمْس", options: ["ش", "س", "ص"], trans: "Shams" },
@@ -410,7 +464,7 @@
       { word: "ليمون", emoji: "🍋", missing: "ل", display: "_َيْمُون", options: ["ل", "ك", "م"], trans: "Laymoon" },
       { word: "موز", emoji: "🍌", missing: "م", display: "_َوْز", options: ["م", "ن", "و"], trans: "Mawz" },
       { word: "نحلة", emoji: "🐝", missing: "ن", display: "_َحْلَة", options: ["ن", "ب", "ت"], trans: "Nahla" },
-      { word: "هدية", emoji: "🎁", missing: "ه", display: "_َدِيَّة", options: ["ه", "م", "ح"], trans: "Hadiyya" },
+      { word: "هدية", emoji: "🎁", missing: "ه", display: "_َدِيَّة", options: ["ه", "م", "ح"], trans: "Hadiyya" },
       { word: "وردة", emoji: "🌹", missing: "و", display: "_َرْدَة", options: ["و", "ر", "ز"], trans: "Warda" },
       { word: "يد", emoji: "✋", missing: "ي", display: "_َد", options: ["ي", "ب", "ت"], trans: "Yad" }
     ];
@@ -425,7 +479,6 @@
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx;
 
-    // ================== نظام الخمول (Idle System) ==================
     let idleTimer;
     const IDLE_TIMEOUT = 60000;
 
@@ -459,7 +512,6 @@
     window.addEventListener('touchstart', resetIdleTimer);
     window.addEventListener('scroll', resetIdleTimer);
 
-    // ================== وظائف الألعاب الأساسية ==================
     function createBackgroundBubbles() {
       const container = document.getElementById('bg-bubbles-container');
       container.innerHTML = '';
@@ -556,7 +608,6 @@
       return l;
     }
 
-    // ================== ترتيب الحروف مع التلميح ==================
     let unscrambleLevelComplete = false;
     function startUnscrambleGame() {
       unscrambleLevelComplete = false; let wordObj = advancedVocab[currentLevelIndex]; let userAnswer = [];
@@ -591,7 +642,6 @@
       });
     }
 
-    // ================== إكمال الفراغ مع التلميح ==================
     let fillblankLevelComplete = false;
     function startFillBlankGame() {
       fillblankLevelComplete = false; const vocab = advancedVocab[currentLevelIndex]; const area = document.getElementById('fillblank-area');
@@ -617,7 +667,6 @@
       });
     }
 
-    // ================== لعبة الفقاعات ==================
     let correctPops = 0; let bubbleLevelComplete = false;
     function startBubbleGame() {
       correctPops = 0; bubbleLevelComplete = false; currentTarget = advancedVocab[currentLevelIndex].missing;
@@ -640,7 +689,6 @@
       activeIntervals.push(interval);
     }
 
-    // ================== لعبة الطائرة ==================
     let planeY = 50, planeX = 10; let airplaneLevelComplete = false;
     function startAirplaneGame() {
       airplaneLevelComplete = false; currentTarget = advancedVocab[currentLevelIndex].missing;
@@ -683,7 +731,6 @@
       });
     }
 
-    // ================== لعبة المتاهة ==================
     let carX = 1, carY = 1; let mazeLevelComplete = false; let mazeLetters = [];
     const mazeGrid = [
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,1,0,0,0,0,0,1,0,0,0,1],[1,0,1,0,1,0,1,1,1,0,1,0,1,0,1],[1,0,1,0,0,0,0,0,1,0,0,0,1,0,1],[1,0,1,1,1,1,1,0,1,1,1,1,1,0,1],
@@ -727,7 +774,6 @@
       }
     });
 
-    // ================== برمجة الشهادة ==================
     function updateCertName(name) {
       document.getElementById('cert-name-display').innerText = name.trim() === "" ? "اسم البطل / Hero Name" : name;
     }
