@@ -90,7 +90,46 @@
             border: 2px solid rgba(255,255,255,0.5); 
         }
         
-        .top-bar { background-color: var(--primary); color: white; padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; font-size: 26px; font-weight: 800; }
+        .top-bar {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            font-size: 26px;
+            font-weight: 800;
+            flex-wrap: wrap;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .back-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 0 #1a252f;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .back-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0;
+        }
         
         .nav-menu { display: flex; background-color: var(--secondary); overflow-x: auto; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .nav-menu::-webkit-scrollbar { height: 5px; }
@@ -147,7 +186,6 @@
         .tool-btn { font-size: 20px; padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer; color: white; font-family: 'Almarai'; font-weight: bold; box-shadow: 0 4px 0 rgba(0,0,0,0.15); transition: 0.2s; }
         .tool-btn:active { transform: translateY(4px); box-shadow: 0 0 0; }
 
-        /* إعدادات الطباعة لبطاقة النتيجة */
         @media print {
             body * { visibility: hidden; }
             #game8, #game8 * { visibility: visible; }
@@ -155,6 +193,22 @@
             .nav-menu, .top-bar, .floating-bg { display: none !important; }
             .hub-card { box-shadow: none; border: none; height: auto; }
             .print-btn { display: none; }
+        }
+
+        @media (max-width: 640px) {
+            .top-bar {
+                font-size: 22px;
+            }
+
+            .top-bar-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .back-btn {
+                font-size: 15px;
+                padding: 9px 14px;
+            }
         }
     </style>
 </head>
@@ -176,7 +230,10 @@
 <div class="hub-card">
     <div class="top-bar">
         <span id="header-title">أبطال الحروف 🚀</span>
-        <span>الجواهر: <span id="total-score" style="color:white">0</span> 💎</span>
+        <div class="top-bar-actions">
+            <span>الجواهر: <span id="total-score" style="color:white">0</span> 💎</span>
+            <a href="/alphabets-audio/" class="back-btn">العودة للصفحة الرئيسية 🏠</a>
+        </div>
     </div>
 
     <div class="nav-menu" id="nav-menu" style="display:none;">
@@ -304,10 +361,8 @@
 </div>
 
 <script>
-    // --- 1. الإعدادات الصوتية (GitHub) وقواعد البيانات ---
     const RAW_URL = "https://raw.githubusercontent.com/bubblesinarabic/alphabets-audio/main/";
     
-    // 28 Letters (All Included)
     const letterFiles = { 
         'أ':'alif', 'ب':'baa', 'ت':'taa', 'ث':'thaa', 'ج':'jeem', 'ح':'haa', 'خ':'khaa', 
         'د':'daal', 'ذ':'thaal', 'ر':'raa', 'ز':'zay', 'س':'seen', 'ش':'sheen', 'ص':'saad', 
@@ -320,7 +375,7 @@
         { q: "بـ ___ ـرة", a: "ـقـ", f: "بَقَرَة", plain: "بقرة", s: "baqarah", icon: "🐄" },
         { q: "جـ ___ ـل", a: "ـبـ", f: "جَبَل", plain: "جبل", s: "jabal", icon: "⛰️" },
         { q: "كـ ___ ـاب", a: "ـتـ", f: "كِتَاب", plain: "كتاب", s: "kitab", icon: "📖" },
-        { q: "مـ ___ ـلث", a: "ـثـ", f: "مُثَلَّث", plain: "مثلث", s: "muthallath", icon: "🔺" },
+        { q: "مـ ___ ـلث", a: "ـثـ", f: "مُثَلَّث", plain: "مثلث", s: "muthallath", icon: "🔺" },
         { q: "شـ ___ ـرة", a: "ـجـ", f: "شَجَرَة", plain: "شجرة", s: "shajarah", icon: "🌳" },
         { q: "بـ ___ ـر", a: "ـحـ", f: "بَحْر", plain: "بحر", s: "bahr", icon: "🌊" },
         { q: "نـ ___ ـلة", a: "ـخـ", f: "نَخْلَة", plain: "نخلة", s: "nakhlah", icon: "🌴" },
@@ -332,11 +387,11 @@
         { q: "مـ ___ ـط", a: "ـشـ", f: "مُشْط", plain: "مشط", s: "musht", icon: "🪮" },
         { q: "عـ ___ ـفور", a: "ـصـ", f: "عُصْفُور", plain: "عصفور", s: "usfour", icon: "🐦" },
         { q: "مـريـ ___", a: "ـض", f: "مَرِيض", plain: "مريض", s: "mareed", icon: "🤒" },
-        { q: "بـ ___ ـطة", a: "ـطـ", f: "بَطَّة", plain: "بطة", s: "battah", icon: "🦆" },
-        { q: "مـ ___ ـلة", a: "ـظـ", f: "مِظَلَّة", plain: "مظلة", s: "mizallah", icon: "☂️" },
+        { q: "بـ ___ ـطة", a: "ـطـ", f: "بَطَّة", plain: "بطة", s: "battah", icon: "🦆" },
+        { q: "مـ ___ ـلة", a: "ـظـ", f: "مِظَلَّة", plain: "مظلة", s: "mizallah", icon: "☂️" },
         { q: "ثـ ___ ـلب", a: "ـعـ", f: "ثَعْلَب", plain: "ثعلب", s: "thalab", icon: "🦊" },
         { q: "بـبـ ___ ـاء", a: "ـغـ", f: "بَبْغَاء", plain: "ببغاء", s: "babghaa", icon: "🦜" },
-        { q: "تـ ___ ـاحة", a: "ـفـ", f: "تُفَّاحَة", plain: "تفاحة", s: "tuffahah", icon: "🍎" },
+        { q: "تـ ___ ـاحة", a: "ـفـ", f: "تُفَّاحَة", plain: "تفاحة", s: "tuffahah", icon: "🍎" },
         { q: "سـمـ ___ ـة", a: "ـكـ", f: "سَمَكَة", plain: "سمكة", s: "samakah", icon: "🐟" },
         { q: "قـ ___ ـم", a: "ـلـ", f: "قَلَم", plain: "قلم", s: "qalam", icon: "🖊️" },
         { q: "قـ ___ ـر", a: "ـمـ", f: "قَمَر", plain: "قمر", s: "qamar", icon: "🌙" },
@@ -364,17 +419,15 @@
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('game'+n).classList.add('active');
         
-        // تفعيل الزر في القائمة العلوية
         if(n <= 8) { document.querySelectorAll('.nav-btn')[n-1].classList.add('active'); }
         
         isArcade = (n === 3);
         if(isArcade) { initGame3(); requestAnimationFrame(arcadeLoop); }
         if(n === 4) { initGame4(); }
         if(n === 7 && !window.coloringInit) { clearColoring(); window.coloringInit = true; }
-        if(n === 8) { updateScoreCard(); } // تحديث الشهادة عند فتح التبويب
+        if(n === 8) { updateScoreCard(); }
     }
 
-    // تحديث وتجهيز بطاقة النتيجة (الشهادة)
     function updateScoreCard() {
         let playerName = document.getElementById('player-name').value || "بطل مجهول";
         document.getElementById('card-name-display').innerText = playerName;
@@ -389,7 +442,6 @@
         document.getElementById('card-rank-display').innerText = rank;
     }
 
-    // --- 2. لعبة الوحش ---
     function initGame1() {
         document.getElementById('g1-icon').innerText = '👾';
         let t = alphabet[g1Idx]; document.getElementById('g1-target').innerText = t;
@@ -422,7 +474,6 @@
     function playWord() { triggerAudio(wordData[g2Idx].s); }
     initGame2();
 
-    // --- 3. لعبة تحطيم الطوب ---
     let isArcade = false, paddleX = 50, asteroids = [], lasers = [], g3Base = "", g3Vowel = "", g3Target = "";
 
     function movePaddle(step) {
@@ -479,7 +530,6 @@
         }
     });
 
-    // --- 4. لعبة الصاروخ ---
     let g4Lvl = 1, g4Max = 5, g4Base = "", g4Vowel = "", g4Target = "";
 
     function initGame4() {
@@ -513,7 +563,6 @@
 
     function playHarakahG4() { triggerAudio(letterFiles[g4Base] + "-" + g4Vowel); }
 
-    // --- 5. التتبع ---
     const tCanvas = document.getElementById('traceCanvas'), tCtx = tCanvas.getContext('2d');
     let tDrw = false; tCtx.lineWidth = 15; tCtx.lineCap = 'round'; tCtx.strokeStyle = '#3498DB';
     function getTP(e) { let r = tCanvas.getBoundingClientRect(); return { x: (e.clientX || e.touches[0].clientX) - r.left, y: (e.clientY || e.touches[0].clientY) - r.top }; }
@@ -525,7 +574,6 @@
     function clearTraceCanvas() { tCtx.clearRect(0,0,340,340); }
     function finishTrace() { triggerAudio("great"); clearTraceCanvas(); document.getElementById('trace-bg').innerText = alphabet[Math.floor(Math.random() * alphabet.length)]; }
 
-    // --- 6. ترتيب الكلمات ---
     function initGame6() {
         let d = wordData[g6Idx]; document.getElementById('g6-icon').innerText = d.icon;
         let lts = d.plain.split(''); 
@@ -570,7 +618,6 @@
     function playScrambleWord() { triggerAudio(wordData[g6Idx].s); }
     initGame6();
 
-    // --- 7. لعبة التلوين ---
     const cCanvas = document.getElementById('colorCanvas'), cCtx = cCanvas.getContext('2d', { willReadFrequently: true });
     let colorTool = 'bucket', isErasing = false;
 
