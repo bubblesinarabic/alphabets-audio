@@ -140,6 +140,22 @@
       margin-top: 20px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
       text-align: center; width: 90%; max-width: 980px; backdrop-filter: blur(5px);
     }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .header-brand {
+      flex: 1;
+      min-width: 260px;
+      text-align: center;
+    }
+
     .header h1 { margin: 0; color: #1565c0; font-size: 30px; font-weight: 800; }
     .header p { margin: 10px 0 10px; color: #546e7a; font-size: 18px; font-weight: 700; }
     
@@ -147,6 +163,31 @@
       color: #27ae60; font-size: 24px; font-weight: 800; margin-top: 10px;
     }
 
+    .back-btn {
+      background: var(--secondary);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-family: 'Almarai', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 0 #1a252f;
+      transition: 0.2s;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .back-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0;
+    }
+    
     /* --- إعدادات سرعة الصوت --- */
     .speed-controls {
       display: flex;
@@ -593,6 +634,16 @@
       .certificate-name { font-size: 24px; }
       .certificate-score { font-size: 20px; }
       .speed-controls { flex-direction: column; gap: 10px; }
+      .header-top {
+        flex-direction: column;
+      }
+      .header-brand {
+        min-width: auto;
+      }
+      .back-btn {
+        font-size: 15px;
+        padding: 9px 14px;
+      }
     }
   </style>
 </head>
@@ -601,9 +652,9 @@
   <div id="welcome-overlay">
     <div class="welcome-card">
       <h2>مرحبًا! 🎮</h2>
-      <p>أدخل اسمك لبدء التعلُّم:</p>
+      <p>أدخل اسمك لبدء التعلُّم:</p>
       <input type="text" id="student-name" placeholder="اسمك..." autocomplete="off" />
-      <button class="start-btn" id="start-app-btn">ابدأ التعلُّم 🚀</button>
+      <button class="start-btn" id="start-app-btn">ابدأ التعلُّم 🚀</button>
     </div>
   </div>
 
@@ -649,8 +700,13 @@
   <ul class="floating-bg" id="floating-bubbles"></ul>
 
   <div class="header">
-    <h1>منصة الحروف التفاعلية 🎮</h1>
-    <p>تحديث كامل لمجموعات الحروف مع أنشطة تدريبية أكثر، مع الحفاظ على نفس التسلسل البصري والتفاعل الممتع.</p>
+    <div class="header-top">
+      <div class="header-brand">
+        <h1>منصة الحروف التفاعلية 🎮</h1>
+        <p>تحديث كامل لمجموعات الحروف مع أنشطة تدريبية أكثر، مع الحفاظ على نفس التسلسل البصري والتفاعل الممتع.</p>
+      </div>
+      <a href="/alphabets-audio/" class="back-btn">العودة للصفحة الرئيسية 🏠</a>
+    </div>
     <div id="user-greeting"></div>
     
     <div class="speed-controls" id="speed-controls">
@@ -697,7 +753,7 @@
     let currentGroup = 'group1';
     let currentIndex = 0;
     let studentName = 'البطل'; 
-    let currentPlaybackRate = 1.0; // متغير سرعة الصوت
+    let currentPlaybackRate = 1.0;
     
     let answeredQuestions = {}; 
     let attemptCounts = {}; 
@@ -705,7 +761,6 @@
     let profilePhotoData = '';
 
     const openMoji = (code) => `https://openmoji.org/data/color/svg/${code}.svg`;
-
 
     const GROUP_FILE_NAMES = {
       group1: 'المجموعة_الأولى',
@@ -754,14 +809,14 @@
           { type: 'fill_blank', title: 'أكمل الفراغ بالحرف الصحيح', word: '___بَل', image: '26F0', options: ['جَـ', 'حَـ', 'خَـ'], correct: 'جَـ', wordAudioCandidates: ['jabal.mp3'] },
           { type: 'fill_blank', title: 'أكمل الفراغ بالحرف الصحيح', word: '___ذَاء', image: '1F45E', options: ['جِـ', 'حِـ', 'خِـ'], correct: 'حِـ', wordAudioCandidates: ['hithaa.mp3', 'hizaa.mp3'] },
           { type: 'fill_blank', title: 'أكمل الفراغ بالحرف الصحيح', word: '___وْخ', image: '1F351', options: ['جَـ', 'حَـ', 'خَـ'], correct: 'خَـ', wordAudioCandidates: ['khawkh.mp3', 'khokh.mp3'] },
-          { type: 'fill_blank', title: 'أكمل الفراغ بالحرف الصحيح', word: '___دِيَّة', image: '1F381', options: ['هَـ', 'مَـ', 'حَـ'], correct: 'هَـ', wordAudioCandidates: ['hadiya.mp3'] },
+          { type: 'fill_blank', title: 'أكمل الفراغ بالحرف الصحيح', word: '___دِيَّة', image: '1F381', options: ['هَـ', 'مَـ', 'حَـ'], correct: 'هَـ', wordAudioCandidates: ['hadiya.mp3'] },
           { type: 'fill_blank', title: 'أكمل الفراغ بالحرف الصحيح', word: '___وْز', image: '1F34C', options: ['مَـ', 'هَـ', 'خَـ'], correct: 'مَـ', wordAudioCandidates: ['mawz.mp3', 'mooz.mp3'] },
           { type: 'put_dot', title: 'أين نضع نقطة حرف الجيم؟', base: 'ح', options: ['⚫ نقطة واحدة فوق', '⚫ نقطة واحدة داخل الحرف', 'بلا نقاط'], correct: '⚫ نقطة واحدة داخل الحرف', audioCandidates: ['jeem.mp3'] },
           { type: 'put_dot', title: 'أين نضع نقطة حرف الخاء؟', base: 'ح', options: ['⚫ نقطة واحدة فوق', '⚫ نقطة واحدة داخل الحرف', 'بلا نقاط'], correct: '⚫ نقطة واحدة فوق', audioCandidates: ['khaa.mp3'] },
           { type: 'put_dot', title: 'كم نقطة نضع لحرف الحاء؟', base: 'ح', options: ['⚫ نقطة واحدة فوق', '⚫ نقطة واحدة داخل الحرف', 'بلا نقاط'], correct: 'بلا نقاط', audioCandidates: ['haa.mp3'] },
           { type: 'form', title: 'كيف نكتب حرف الجيم في وسط الكلمة؟', word: 'شَـ___ـرَة', image: '1F333', options: ['جـ', 'ـجـ', 'ـج'], correct: 'ـجـ', wordAudioCandidates: ['shajara.mp3'] },
           { type: 'form', title: 'كيف نكتب حرف الحاء في آخر الكلمة عند اتصاله؟', word: 'مِلْـ___', image: '1F9C2', options: ['ح', 'ـح', 'حـ'], correct: 'ـح', wordAudioCandidates: ['milh.mp3'] },
-          { type: 'form', title: 'كيف نكتب حرف الخاء في آخر الكلمة عند اتصاله؟', word: 'بَطِّيـ___', image: '1F349', options: ['خ', 'ـخ', 'ـخـ'], correct: 'ـخ', wordAudioCandidates: ['batikh.mp3'] },
+          { type: 'form', title: 'كيف نكتب حرف الخاء في آخر الكلمة عند اتصاله؟', word: 'بَطِّيـ___', image: '1F349', options: ['خ', 'ـخ', 'ـخـ'], correct: 'ـخ', wordAudioCandidates: ['batikh.mp3'] },
           { type: 'form', title: 'اختر شكل حرف الحاء في وسط الكلمة', word: 'فَـ___ـد', image: '1F406', options: ['هـ', 'ـهـ', 'ـه'], correct: 'ـهـ', wordAudioCandidates: ['fahd.mp3'] },
           { type: 'form', title: 'اختر شكل حرف الميم في أول الكلمة', word: '___دْرَسَة', image: '1F3EB', options: ['مـ', 'ـمـ', 'ـم'], correct: 'مـ', wordAudioCandidates: ['madrasa.mp3'] }
         ]
@@ -774,7 +829,7 @@
           { type: 'audio', title: 'استمع إلى الحرف ثم اختر الإجابة الصحيحة', audioCandidates: ['waw.mp3', 'waaw.mp3'], options: ['و', 'ز', 'ر'], correct: 'و' },
           { type: 'fill_blank', title: 'أكمل الفراغ بالحرف الصحيح', word: '___ب', image: '1F43B', options: ['د', 'ذ', 'ر'], correct: 'د', wordAudioCandidates: ['dubb.mp3', 'dub.mp3'] },
           { type: 'fill_blank', title: 'أكمل الفراغ بالحرف الصحيح', word: '___رَة', image: '1F33D', options: ['د', 'ذ', 'ز'], correct: 'ذ', wordAudioCandidates: ['thura.mp3'] },
-          { type: 'fill_blank', title: 'أكمل الفراغ بالحرف الصحيح', word: '___مَّان', image: '1F34E', options: ['ر', 'ز', 'و'], correct: 'ر', wordAudioCandidates: ['rummaan.mp3', 'rumman.mp3'] },
+          { type: 'fill_blank', title: 'أكمل الفراغ بالحرف الصحيح', word: '___مَّان', image: '1F34E', options: ['ر', 'ز', 'و'], correct: 'ر', wordAudioCandidates: ['rummaan.mp3', 'rumman.mp3'] },
           { type: 'fill_blank', title: 'أكمل الفراغ بالحرف الصحيح', word: '___هْرَة', image: '1F33A', options: ['ز', 'ر', 'و'], correct: 'ز', wordAudioCandidates: ['zahra.mp3'] },
           { type: 'fill_blank', title: 'أكمل الفراغ بالحرف الصحيح', word: '___رْدَة', image: '1F339', options: ['و', 'ز', 'ر'], correct: 'و', wordAudioCandidates: ['wardah.mp3', 'warda.mp3'] },
           { type: 'put_dot', title: 'كم نقطة نضع لحرف الدال؟', base: 'د', options: ['بلا نقاط', '⚫ نقطة واحدة فوق', '⚫⚫ نقطتان فوق'], correct: 'بلا نقاط', audioCandidates: ['dal.mp3'] },
@@ -874,10 +929,7 @@
 
       const filename = audioQueue.shift();
       currentAudio = new Audio(buildAudioUrl(filename));
-      
-      // --- تطبيق سرعة الصوت المحددة ---
       currentAudio.playbackRate = currentPlaybackRate;
-      
       currentAudio.addEventListener('error', tryNextAudio, { once: true });
 
       const playPromise = currentAudio.play();
@@ -965,7 +1017,6 @@
     function changeExercise(direction) {
       const group = groupsDB[currentGroup];
       const nextIndex = currentIndex + direction;
-      // السماح بالوصول للشهادة
       if (nextIndex < 0 || nextIndex > group.exercises.length) return; 
       currentIndex = nextIndex;
       renderExercise();
@@ -982,7 +1033,6 @@
       return button;
     }
 
-    // --- دالة رسم شاشة الشهادة ---
     function renderCertificate(group) {
       const container = document.getElementById('exercise-render-area');
       container.innerHTML = '';
@@ -1068,7 +1118,7 @@
             this.style.pointerEvents = 'auto';
             setCameraMessage('افتح الكاميرا أو ارفع صورة للشهادة.', '');
 
-      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
               window.lucide.createIcons();
             }
           });
@@ -1094,7 +1144,7 @@
       playSuccess();
     }
 
-function renderExercise() {
+    function renderExercise() {
       const group = groupsDB[currentGroup];
       if (!group) return;
 
@@ -1383,7 +1433,6 @@ function renderExercise() {
       }
     }
 
-
     function stopCameraStream() {
       if (cameraStream) {
         cameraStream.getTracks().forEach(track => track.stop());
@@ -1481,7 +1530,6 @@ function renderExercise() {
         setCameraMessage('افتح الكاميرا أو ارفع صورة.', '');
       }
     }
-
 
     function handlePhotoUpload(event) {
       const file = event && event.target && event.target.files ? event.target.files[0] : null;
@@ -1619,20 +1667,13 @@ function renderExercise() {
       });
     }
 
-    // --- برمجة تشغيل أزرار السرعة ---
     function initSpeedControls() {
       const speedBtns = document.querySelectorAll('.speed-btn');
       speedBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-          // إزالة كلاس التفعيل من جميع الأزرار
           speedBtns.forEach(b => b.classList.remove('active'));
-          // إضافة التفعيل للزر المختار
           btn.classList.add('active');
-          
-          // تحديث سرعة التشغيل بناءً على قيمة الزر
           currentPlaybackRate = parseFloat(btn.dataset.speed);
-          
-          // إذا كان هناك صوت يعمل حالياً، يتم تطبيق السرعة عليه فوراً
           if (currentAudio) {
             currentAudio.playbackRate = currentPlaybackRate;
           }
@@ -1650,7 +1691,7 @@ function renderExercise() {
       initCameraControls();
       createBackgroundBubbles();
       buildTabs();
-      initSpeedControls(); // استدعاء دالة أزرار السرعة هنا
+      initSpeedControls();
       renderExercise();
 
       try {
