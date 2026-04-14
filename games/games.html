@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ألعاب الحروف التفاعلية - المستوى المتقدم 🎮 | Interactive Arabic Letters Games</title>
+  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&display=swap" rel="stylesheet" />
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script> 
+  
+  <style>
+    :root {
+      --primary: #ffb020;
+      --secondary: #2c3e50;
+      --success: #27ae60;
+      --error: #e74c3c;
+      --bg-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    body {
+      font-family: 'Almarai', sans-serif;
+      background: var(--bg-gradient);
+      margin: 0;
+      padding: 10px;
+      text-align: center;
+      color: var(--secondary);
+      overflow-x: hidden;
+      user-select: none;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    /* --- تنسيقات الخلفية المتحركة (الفقاعات) --- */
+    .bg-bubbles {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1; overflow: hidden; margin: 0; padding: 0; pointer-events: none;
+    }
+
+    .bg-bubbles li {
+      position: absolute; list-style: none; display: flex; justify-content: center; align-items: center; bottom: -150px;
+      background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 50%; color: rgba(255, 255, 255, 0.7);
+      font-weight: 800; animation: bgFloatUp 25s infinite linear; box-shadow: inset 0 0 10px rgba(255,255,255,0.5);
+    }
+
+    @keyframes bgFloatUp {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-1200px) rotate(360deg); opacity: 0; }
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 20px;
+      max-width: 900px; margin: 0 auto 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    h1 { color: #1565c0; margin: 0 0 5px 0; font-weight: 800; font-size: 24px; }
+    .subtitle { color: #7f8c8d; font-size: 14px; margin-bottom: 15px; font-weight: bold; }
+
+    .nav-tabs { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+
+    .tab-btn {
+      background: var(--primary); border: none; padding: 10px 15px; border-radius: 12px; font-family: inherit; font-weight: bold; font-size: 15px;
+      color: #fff; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 90px;
+    }
+    .tab-btn i.lucide { width: 20px; height: 20px; }
+    .tab-btn span.en { font-size: 12px; opacity: 0.9; font-weight: 400; }
+    .tab-btn:active { transform: translateY(4px); box-shadow: none; }
+    
+    .tab-btn.airplane-btn { background: #9b59b6; }
+    .tab-btn.maze-btn { background: #2ecc71; }
+    .tab-btn.unscramble-btn { background: #e67e22; }
+    .tab-btn.fillblank-btn { background: #e74c3c; }
+    .tab-btn.cert-btn { background: #f39c12; }
+
+    .global-controls {
+      display: flex; justify-content: center; align-items: center; gap: 15px;
+      max-width: 900px; margin: 0 auto 15px; background: rgba(255, 255, 255, 0.95);
+      padding: 12px 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .nav-btn {
+      background: var(--secondary); color: #fff; border: none; padding: 8px 20px;
+      border-radius: 12px; font-family: inherit; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 #1a252f; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    }
+    .nav-btn i.lucide { width: 18px; height: 18px; }
+    .nav-btn .top-row { display: flex; align-items: center; gap: 5px; }
+    .nav-btn span.en { font-size: 11px; font-weight: normal; }
+    .nav-btn:active:not(:disabled) { transform: translateY(4px); box-shadow: none; }
+    .nav-btn:disabled { background: #bdc3c7; box-shadow: 0 4px 0 #95a5a6; cursor: not-allowed; opacity: 0.7; }
+
+    .level-indicator {
+      background: var(--success); color: #fff; padding: 8px 15px; border-radius: 15px; font-weight: 800; font-size: 16px; border: 2px solid #2ecc71; min-width: 160px; line-height: 1.2;
+    }
+    .level-indicator .en { display: block; font-size: 12px; font-weight: normal; }
+
+    .game-container {
+      background: rgba(255, 255, 255, 0.95); width: 100%; max-width: 900px; height: 500px;
+      margin: 0 auto; border-radius: 20px; position: relative; overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none;
+    }
+    .game-container.active { display: block; }
+
+    .instructions {
+      background: #e3f2fd; padding: 10px 15px; font-size: 18px; font-weight: 800;
+      color: #1565c0; border-bottom: 3px solid #bbdefb; position: absolute; top: 0; left: 0; right: 0; z-index: 10; line-height: 1.4;
+    }
+    .instructions .en { display: block; font-size: 14px; color: #7f8c8d; font-weight: 700; }
+
+    .score-board {
+      position: absolute; top: 12px; left: 15px; background: var(--primary); color: #fff; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 16px; z-index: 20; border: 2px solid #e67e22; line-height: 1.2;
+    }
+    .score-board .en { display: block; font-size: 12px; font-weight: normal; }
+
+    /* --- تلميح النطق (Transliteration Hint) --- */
+    .hint-text {
+      font-size: 16px;
+      color: #7f8c8d;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 6px 18px;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px dashed #bdc3c7;
+      margin-top: -10px;
+      direction: ltr; /* لضمان ظهور النص الإنجليزي بشكل سليم */
+    }
+
+    /* --- تنسيقات الألعاب --- */
+    #unscramble-area { position: absolute; top: 70px; bottom: 0; left: 0; right: 0; background: #fff3e0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
+    .word-image { width: 100px; height: 100px; font-size: 70px; line-height: 100px; background: #fff; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: flex; justify-content: center; align-items: center; }
+    .answer-slots, .scrambled-letters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; direction: rtl; }
+    .slot, .letter-tile { width: 55px; height: 55px; font-size: 28px; font-weight: bold; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
+    .slot { background: #ffe0b2; border: 2px dashed #fb8c00; color: #d35400; }
+    .letter-tile { background: var(--primary); color: white; cursor: pointer; box-shadow: 0 4px 0 #d68910; transition: transform 0.1s; }
+    .letter-tile:active { transform: scale(0.9); }
+    .letter-tile.hidden { visibility: hidden; }
+
+    #fillblank-area { position: absolute; top: 70px; bottom: 0; left: 0; right: 0; background: #fce4ec; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+    .question-box { font-size: 45px; font-weight: 800; color: #880e4f; background: #fff; padding: 15px 30px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); letter-spacing: 5px; direction: rtl; }
+    .blank-space { color: var(--error); border-bottom: 5px solid var(--error); padding: 0 10px; }
+    .options-container { display: flex; gap: 20px; direction: rtl; }
+    .option-btn { width: 70px; height: 70px; font-size: 35px; font-weight: bold; background: #e91e63; color: white; border: none; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 #c2185b; font-family: inherit; }
+    .option-btn:active { transform: translateY(5px); box-shadow: none; }
+
+    #bubble-area, #airplane-area, #maze-area { position: absolute; top: 70px; bottom: 0; left: 0; right: 0; overflow: hidden; }
+    #bubble-area { background: #e0f7fa; }
+    .bubble-wrapper { position: absolute; bottom: -80px; width: 70px; height: 70px; animation: floatUp linear forwards; z-index: 5; }
+    .bubble-inner {
+      width: 100%; height: 100%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(150,200,255,0.6));
+      border: 2px solid rgba(255,255,255,0.8); border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 35px; font-weight: 800; color: #1565c0; cursor: pointer; box-shadow: 0 8px 15px rgba(0,0,0,0.1); transition: transform 0.1s;
+    }
+    .bubble-inner:active { transform: scale(0.9); }
+    .popped-correct .bubble-inner { animation: popSuccess 0.3s forwards !important; }
+    .popped-wrong .bubble-inner { animation: popError 0.3s forwards !important; background: rgba(231, 76, 60, 0.8) !important; color: white; }
+    @keyframes floatUp { to { transform: translateY(-600px); } }
+    @keyframes popSuccess { 50% { transform: scale(1.4); opacity: 0.8; background: var(--success); color: white; } 100% { transform: scale(0); opacity: 0; } }
+    @keyframes popError { 50% { transform: scale(1.2); opacity: 0.8; } 100% { transform: scale(0); opacity: 0; } }
+
+    #airplane-area { background: linear-gradient(to bottom, #87CEEB, #E0F6FF); }
+    .airplane { position: absolute; transition: top 0.15s ease-out, right 0.15s ease-out; z-index: 5; transform: scaleX(-1); }
+    .airplane img { width: 70px; height: auto; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2)); }
+    .cloud { position: absolute; left: -120px; width: 100px; height: 60px; background: #fff; border-radius: 50px; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 800; color: #333; }
+    .cloud::before { content: ''; position: absolute; background: #fff; border-radius: 50%; width: 50px; height: 50px; top: -20px; right: 15px; }
+    .cloud::after { content: ''; position: absolute; background: #fff; border-radius: 50%; width: 40px; height: 40px; top: -10px; left: 15px; }
+    .cloud span { position: relative; z-index: 2; color: #1565c0; }
+
+    #maze-area { background: linear-gradient(to bottom, #7f8c8d, #bdc3c7); display: flex; align-items: center; justify-content: center; }
+    #maze-grid-container {
+      display: grid; grid-template-columns: repeat(15, 40px); grid-template-rows: repeat(9, 40px);
+      background: #2c3e50; border: 4px solid #34495e; border-radius: 10px; position: relative; direction: ltr; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+    .maze-wall { background: #34495e; background-image: repeating-linear-gradient(45deg, #2c3e50 25%, transparent 25%, transparent 75%, #2c3e50 75%, #2c3e50), repeating-linear-gradient(45deg, #2c3e50 25%, #34495e 25%, #34495e 75%, #2c3e50 75%, #2c3e50); background-position: 0 0, 10px 10px; background-size: 20px 20px; border-radius: 4px; }
+    .maze-path { background: #ecf0f1; border-radius: 2px; }
+    .maze-car { position: absolute; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 28px; transition: top 0.15s, left 0.15s, transform 0.15s; z-index: 10; transform: scaleX(-1); }
+    .maze-letter { position: absolute; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: #1565c0; z-index: 5; background: rgba(255,255,255,0.8); border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); animation: pulse 1s infinite alternate; }
+    @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
+    
+    .controls { position: absolute; bottom: 10px; right: 10px; display: flex; flex-direction: column; gap: 5px; z-index: 10; }
+    .controls-row { display: flex; justify-content: center; gap: 5px; }
+    .ctrl-btn { 
+      background: var(--secondary); color: #fff; border: none; width: 45px; height: 45px; border-radius: 10px; 
+      cursor: pointer; box-shadow: 0 4px 0 #1a252f; display: flex; justify-content: center; align-items: center; transition: 0.1s;
+    }
+    .ctrl-btn i.lucide { width: 24px; height: 24px; }
+    .ctrl-btn:active { transform: translateY(4px); box-shadow: none; }
+
+    /* --- قسم الشهادة --- */
+    #certificate-game {
+      background: #f8f9fa; overflow-y: auto; height: 100%; padding-bottom: 20px;
+    }
+    .cert-controls-panel {
+      display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.9); border-bottom: 2px solid #ddd;
+    }
+    .cert-input {
+      padding: 10px; font-family: inherit; font-size: 16px; border: 2px solid #ccc; border-radius: 10px; width: 250px; text-align: center;
+    }
+    .cert-action-btn {
+      background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 10px; font-family: inherit; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 #2980b9; display: flex; align-items: center; gap: 6px; font-size: 15px;
+    }
+    .cert-action-btn i.lucide { width: 18px; height: 18px; }
+    .cert-action-btn:active { transform: translateY(4px); box-shadow: none; }
+    .cert-action-btn.download-btn { background: #27ae60; box-shadow: 0 4px 0 #2ecc71; }
+    
+    .certificate-wrapper {
+      width: 750px; height: 530px; margin: 20px auto; position: relative;
+      background: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0l50 50 50-50v100l-50-50-50 50z" fill="%23fdf3e7" fill-opacity="0.4"/></svg>'), #fff;
+      border: 15px solid var(--primary); outline: 5px solid #d35400; border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15); padding: 30px; box-sizing: border-box;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .cert-inner-border {
+      position: absolute; top: 15px; left: 15px; right: 15px; bottom: 15px;
+      border: 2px dashed #d35400; border-radius: 5px; pointer-events: none;
+    }
+    .cert-title { color: #d35400; font-size: 45px; margin: 0; font-weight: 800; letter-spacing: 2px; }
+    .cert-subtitle { color: #e67e22; font-size: 20px; margin: 5px 0 20px; font-weight: bold; }
+    
+    .cert-photo-box {
+      width: 130px; height: 130px; border: 4px solid var(--primary); border-radius: 50%;
+      background: #eee; overflow: hidden; display: flex; justify-content: center; align-items: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 15px;
+    }
+    .cert-photo-box img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .cert-text { font-size: 22px; color: #2c3e50; margin: 10px 0; font-weight: bold; }
+    .cert-text .en { display: block; font-size: 16px; color: #7f8c8d; font-weight: normal; margin-top: 5px; }
+    
+    .cert-name-display { font-size: 40px; color: #1565c0; font-weight: 800; margin: 5px 0 15px; border-bottom: 2px solid #1565c0; padding-bottom: 5px; min-width: 300px; display: inline-block; }
+    
+    .cert-seal {
+      position: absolute; bottom: 30px; left: 40px; width: 80px; height: 80px;
+      background: #e74c3c; border-radius: 50%; border: 4px dashed #f1c40f;
+      display: flex; justify-content: center; align-items: center; color: white;
+      font-weight: bold; font-size: 14px; transform: rotate(-15deg); box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+
+    #camera-modal {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+      z-index: 1000; display: none; flex-direction: column; justify-content: center; align-items: center;
+    }
+    #camera-video { width: 400px; max-width: 90%; background: #000; border: 5px solid #fff; border-radius: 15px; margin-bottom: 20px; transform: scaleX(-1); }
+    .camera-btns { display: flex; gap: 15px; }
+
+    #idle-modal {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+      z-index: 2000; display: none; flex-direction: column; justify-content: center; align-items: center;
+    }
+    .idle-content {
+      background: #fff; padding: 40px; border-radius: 20px; text-align: center; border: 5px solid var(--primary); max-width: 90%;
+    }
+    .idle-content h2 { color: var(--secondary); margin-top: 0; font-size: 30px; font-weight: 800; }
+    .idle-content .en-text { color: #7f8c8d; font-size: 18px; margin-bottom: 30px; font-weight: bold; }
+    .idle-btns { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+  <ul class="bg-bubbles" id="bg-bubbles-container"></ul>
+
+  <div class="header">
+    <h1>ألعاب الحروف التفاعلية 🎮</h1>
+    <div class="subtitle">Interactive Arabic Letters Games</div>
+    <div class="nav-tabs">
+      <button class="tab-btn" onclick="switchGame('bubble')"><i data-lucide="droplet"></i> الفقاعات <span class="en">Bubbles</span></button>
+      <button class="tab-btn airplane-btn" onclick="switchGame('airplane')"><i data-lucide="plane"></i> الطائرة <span class="en">Airplane</span></button>
+      <button class="tab-btn maze-btn" onclick="switchGame('maze')"><i data-lucide="car"></i> المتاهة <span class="en">Maze</span></button>
+      <button class="tab-btn unscramble-btn" onclick="switchGame('unscramble')"><i data-lucide="puzzle"></i> الترتيب <span class="en">Unscramble</span></button>
+      <button class="tab-btn fillblank-btn" onclick="switchGame('fillblank')"><i data-lucide="type"></i> الفراغ <span class="en">Fill Blanks</span></button>
+      <button class="tab-btn cert-btn" onclick="switchGame('certificate')"><i data-lucide="award"></i> الشهادة <span class="en">Certificate</span></button>
+    </div>
+  </div>
+
+  <div class="global-controls" id="global-controls">
+    <button class="nav-btn" onclick="prevLevel()" id="btn-prev">
+      <div class="top-row"><i data-lucide="chevron-right"></i> السابق</div>
+      <span class="en">Prev</span>
+    </button>
+    <div class="level-indicator">المستوى <span class="en">Level</span><span id="current-level-text">1</span> / <span id="total-levels-text">28</span></div>
+    <button class="nav-btn" onclick="nextLevel()" id="btn-next">
+      <div class="top-row">التالي <i data-lucide="chevron-left"></i></div>
+      <span class="en">Next</span>
+    </button>
+  </div>
+
+  <div id="bubble-game" class="game-container active">
+    <div class="score-board">النقاط <span class="en">Score</span><span class="score-display">0</span></div>
+    <div class="instructions" id="bubble-instruction"></div>
+    <div id="bubble-area"></div>
+  </div>
+
+  <div id="airplane-game" class="game-container">
+    <div class="score-board">النقاط <span class="en">Score</span><span class="score-display">0</span></div>
+    <div class="instructions" id="airplane-instruction"></div>
+    <div id="airplane-area">
+      <div class="controls">
+        <div class="controls-row"><button class="ctrl-btn" onclick="movePlane(0, -10)"><i data-lucide="arrow-up"></i></button></div>
+        <div class="controls-row">
+          <button class="ctrl-btn" onclick="movePlane(10, 0)"><i data-lucide="arrow-left"></i></button>
+          <button class="ctrl-btn" onclick="movePlane(0, 10)"><i data-lucide="arrow-down"></i></button>
+          <button class="ctrl-btn" onclick="movePlane(-10, 0)"><i data-lucide="arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="maze-game" class="game-container">
+    <div class="score-board">النقاط <span class="en">Score</span><span class="score-display">0</span></div>
+    <div class="instructions" id="maze-instruction"></div>
+    <div id="maze-area">
+      <div id="maze-grid-container"></div>
+      <div class="controls">
+        <div class="controls-row"><button class="ctrl-btn" onclick="moveCar(0, -1)"><i data-lucide="arrow-up"></i></button></div>
+        <div class="controls-row">
+          <button class="ctrl-btn" onclick="moveCar(-1, 0)"><i data-lucide="arrow-left"></i></button>
+          <button class="ctrl-btn" onclick="moveCar(0, 1)"><i data-lucide="arrow-down"></i></button>
+          <button class="ctrl-btn" onclick="moveCar(1, 0)"><i data-lucide="arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="unscramble-game" class="game-container">
+    <div class="score-board">النقاط <span class="en">Score</span><span class="score-display">0</span></div>
+    <div class="instructions">انقر على الحروف بالترتيب لتكوين الكلمة <span class="en">Click the letters in order to form the word</span></div>
+    <div id="unscramble-area"></div>
+  </div>
+
+  <div id="fillblank-game" class="game-container">
+    <div class="score-board">النقاط <span class="en">Score</span><span class="score-display">0</span></div>
+    <div class="instructions">اختر الحرف الناقص لإكمال الكلمة <span class="en">Choose the missing letter to complete the word</span></div>
+    <div id="fillblank-area"></div>
+  </div>
+
+  <div id="certificate-game" class="game-container">
+    <div class="cert-controls-panel">
+      <input type="text" id="cert-name-input" class="cert-input" placeholder="اكتب اسم البطل هنا / Enter Name" oninput="updateCertName(this.value)">
+      <button class="cert-action-btn" onclick="document.getElementById('cert-upload').click()"><i data-lucide="upload"></i> رفع صورة / Upload</button>
+      <input type="file" id="cert-upload" style="display:none" accept="image/*" onchange="handleCertUpload(event)">
+      <button class="cert-action-btn" onclick="openCamera()"><i data-lucide="camera"></i> التقاط صورة / Camera</button>
+      <button class="cert-action-btn download-btn" onclick="downloadCertificate()"><i data-lucide="download"></i> تحميل / Download</button>
+    </div>
+    <div id="cert-preview-area" style="overflow-x: auto; padding: 20px 0;">
+      <div class="certificate-wrapper" id="certificate-content">
+        <div class="cert-inner-border"></div>
+        <h1 class="cert-title">شهادة تقدير</h1>
+        <div class="cert-subtitle">Certificate of Achievement</div>
+        <div class="cert-photo-box">
+          <img id="cert-photo" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23b0bec5'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>" alt="صورة البطل">
+        </div>
+        <div class="cert-text">تُمنح هذه الشهادة للبطل الرائع:<span class="en">This certificate is proudly presented to:</span></div>
+        <div class="cert-name-display" id="cert-name-display">اسم البطل / Hero Name</div>
+        <div class="cert-text" style="font-size: 18px;">لإتمامه ألعاب الحروف الأبجدية بنجاح وامتياز!<span class="en" style="font-size: 14px;">For successfully completing the Arabic Alphabet Games!</span></div>
+        <div class="cert-seal">ممتاز<br>Excellent</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="camera-modal">
+    <video id="camera-video" autoplay playsinline></video>
+    <div class="camera-btns">
+      <button class="cert-action-btn download-btn" onclick="captureCamera()"><i data-lucide="aperture"></i> التقاط / Capture</button>
+      <button class="cert-action-btn" style="background:#e74c3c; box-shadow: 0 4px 0 #c0392b;" onclick="closeCamera()"><i data-lucide="x-circle"></i> إلغاء / Cancel</button>
+    </div>
+  </div>
+
+  <div id="idle-modal">
+    <div class="idle-content">
+      <h2>هل ما زلت تلعب؟</h2>
+      <div class="en-text">Are you still playing?</div>
+      <div class="idle-btns">
+        <button class="cert-action-btn download-btn" onclick="hideIdleModal()"><i data-lucide="play"></i> إكمال اللعب / Continue</button>
+        <button class="cert-action-btn" style="background:#e74c3c; box-shadow: 0 4px 0 #c0392b;" onclick="fullRestart()"><i data-lucide="rotate-ccw"></i> البدء من جديد / Restart</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const letters = ['أ','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ك','ل','م','ن','ه','و','ي'];
+    
+    // المفردات مع إضافة التلميح الصوتي (Transliteration)
+    const advancedVocab = [
+      { word: "أرنب", emoji: "🐰", missing: "أ", display: "_َرْنَب", options: ["أ", "إ", "ا"], trans: "Arnab" },
+      { word: "بطة", emoji: "🦆", missing: "ب", display: "_َطَّة", options: ["ب", "ت", "ث"], trans: "Batta" },
+      { word: "تفاحة", emoji: "🍎", missing: "ت", display: "_ُفَّاحَة", options: ["ت", "ب", "ث"], trans: "Tuffaha" },
+      { word: "ثعلب", emoji: "🦊", missing: "ث", display: "_َعْلَب", options: ["ث", "ت", "ب"], trans: "Thalab" },
+      { word: "جمل", emoji: "🐪", missing: "ج", display: "_َمَل", options: ["ج", "ح", "خ"], trans: "Jamal" },
+      { word: "حصان", emoji: "🐴", missing: "ح", display: "_ِصَان", options: ["ح", "ج", "خ"], trans: "Hisan" },
+      { word: "خروف", emoji: "🐑", missing: "خ", display: "_َرُوف", options: ["خ", "ح", "ج"], trans: "Kharouf" },
+      { word: "دجاجة", emoji: "🐔", missing: "د", display: "_َجَاجَة", options: ["د", "ذ", "ر"], trans: "Dajaja" },
+      { word: "ذرة", emoji: "🌽", missing: "ذ", display: "_ُرَة", options: ["ذ", "د", "ز"], trans: "Thura" },
+      { word: "رمان", emoji: "<img src='https://raw.githubusercontent.com/bubblesinarabic/alphabets-audio/main/pomegranate.svg' style='height: 1.2em; vertical-align: middle;' alt='رمان'>", missing: "ر", display: "_ُمَّان", options: ["ر", "ز", "د"], trans: "Rumman" },
+      { word: "زرافة", emoji: "🦒", missing: "ز", display: "_َرَافَة", options: ["ز", "ر", "ذ"], trans: "Zarafa" },
+      { word: "سمكة", emoji: "🐟", missing: "س", display: "_َمَكَة", options: ["س", "ش", "ص"], trans: "Samaka" },
+      { word: "شمس", emoji: "☀️", missing: "ش", display: "_َمْس", options: ["ش", "س", "ص"], trans: "Shams" },
+      { word: "صقر", emoji: "🦅", missing: "ص", display: "_َقْر", options: ["ص", "ض", "س"], trans: "Saqr" },
+      { word: "ضفدع", emoji: "🐸", missing: "ض", display: "_ِفْدَع", options: ["ض", "ص", "ط"], trans: "Difda'" },
+      { word: "طائرة", emoji: "✈️", missing: "ط", display: "_َائِرَة", options: ["ط", "ظ", "ض"], trans: "Ta'ira" },
+      { word: "ظرف", emoji: "✉️", missing: "ظ", display: "_َرْف", options: ["ظ", "ط", "ض"], trans: "Tharf" },
+      { word: "عصفور", emoji: "🐦", missing: "ع", display: "_ُصْفُور", options: ["ع", "غ", "خ"], trans: "Asfour" },
+      { word: "غزال", emoji: "🦌", missing: "غ", display: "_َزَال", options: ["غ", "ع", "ف"], trans: "Ghazal" },
+      { word: "فيل", emoji: "🐘", missing: "ف", display: "_ِيل", options: ["ف", "ق", "ك"], trans: "Feel" },
+      { word: "قمر", emoji: "🌙", missing: "ق", display: "_َمَر", options: ["ق", "ف", "ك"], trans: "Qamar" },
+      { word: "كتاب", emoji: "📘", missing: "ك", display: "_ِتَاب", options: ["ك", "ق", "ل"], trans: "Kitab" },
+      { word: "ليمون", emoji: "🍋", missing: "ل", display: "_َيْمُون", options: ["ل", "ك", "م"], trans: "Laymoon" },
+      { word: "موز", emoji: "🍌", missing: "م", display: "_َوْز", options: ["م", "ن", "و"], trans: "Mawz" },
+      { word: "نحلة", emoji: "🐝", missing: "ن", display: "_َحْلَة", options: ["ن", "ب", "ت"], trans: "Nahla" },
+      { word: "هدية", emoji: "🎁", missing: "ه", display: "_َدِيَّة", options: ["ه", "م", "ح"], trans: "Hadiyya" },
+      { word: "وردة", emoji: "🌹", missing: "و", display: "_َرْدَة", options: ["و", "ر", "ز"], trans: "Warda" },
+      { word: "يد", emoji: "✋", missing: "ي", display: "_َد", options: ["ي", "ب", "ت"], trans: "Yad" }
+    ];
+
+    let currentLevelIndex = 0;
+    const totalLevels = advancedVocab.length;
+    let activeGame = 'bubble';
+    let score = 0;
+    let currentTarget = '';
+    let activeIntervals = [];
+
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+
+    // ================== نظام الخمول (Idle System) ==================
+    let idleTimer;
+    const IDLE_TIMEOUT = 60000;
+
+    function resetIdleTimer() {
+      clearTimeout(idleTimer);
+      if (document.getElementById('idle-modal').style.display !== 'flex') {
+        idleTimer = setTimeout(showIdleModal, IDLE_TIMEOUT);
+      }
+    }
+
+    function showIdleModal() {
+      document.getElementById('idle-modal').style.display = 'flex';
+      clearAllIntervals();
+    }
+
+    function hideIdleModal() {
+      document.getElementById('idle-modal').style.display = 'none';
+      restartCurrentGame(); 
+      resetIdleTimer();
+    }
+
+    function fullRestart() {
+      document.getElementById('idle-modal').style.display = 'none';
+      switchGame('bubble'); 
+      resetIdleTimer();
+    }
+
+    window.addEventListener('mousemove', resetIdleTimer);
+    window.addEventListener('mousedown', resetIdleTimer);
+    window.addEventListener('keypress', resetIdleTimer);
+    window.addEventListener('touchstart', resetIdleTimer);
+    window.addEventListener('scroll', resetIdleTimer);
+
+    // ================== وظائف الألعاب الأساسية ==================
+    function createBackgroundBubbles() {
+      const container = document.getElementById('bg-bubbles-container');
+      container.innerHTML = '';
+      for (let i = 0; i < 20; i++) {
+        const li = document.createElement('li');
+        const size = Math.floor(Math.random() * 60) + 30;
+        const left = Math.floor(Math.random() * 100);
+        li.innerText = letters[Math.floor(Math.random() * letters.length)];
+        li.style.width = size + 'px'; li.style.height = size + 'px';
+        li.style.fontSize = (size * 0.5) + 'px'; li.style.left = left + '%';
+        li.style.animationDelay = (Math.random() * 15) + 's'; 
+        li.style.animationDuration = (Math.random() * 20 + 15) + 's';
+        container.appendChild(li);
+      }
+    }
+
+    function playLetterSound(letter) {
+      try {
+        const audio = new Audio(`https://raw.githubusercontent.com/bubblesinarabic/alphabets-audio/main/${letter}.mp3`);
+        audio.play().catch(e => console.warn("تعذر تشغيل الصوت:", e));
+      } catch (err) {}
+    }
+
+    function playSound(type) {
+      if (!audioCtx) audioCtx = new AudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+      
+      if (type === 'pop') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(1, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+      } else if (type === 'success') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime + 0.1); osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.2);
+        gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+      } else if (type === 'error') {
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+      }
+    }
+
+    function updateLevelUI() {
+      document.getElementById('current-level-text').innerText = currentLevelIndex + 1;
+      document.getElementById('total-levels-text').innerText = totalLevels;
+      document.querySelectorAll('.score-display').forEach(el => el.innerText = score);
+      document.getElementById('btn-prev').disabled = currentLevelIndex === 0;
+      document.getElementById('btn-next').disabled = currentLevelIndex === totalLevels - 1;
+    }
+
+    function nextLevel() { if (currentLevelIndex < totalLevels - 1) { currentLevelIndex++; restartCurrentGame(); } }
+    function prevLevel() { if (currentLevelIndex > 0) { currentLevelIndex--; restartCurrentGame(); } }
+
+    function showWinMessage() {
+      clearAllIntervals();
+      document.getElementById(activeGame + '-area').innerHTML = `
+        <div class="win-screen">🎉 أحسنت يا بطل! لقد أكملت جميع المستويات بنجاح 🎉
+        <span class="en">Great job! You completed all levels successfully</span><br>النقاط | Score: ${score}</div>`;
+    }
+
+    function clearAllIntervals() { activeIntervals.forEach(clearInterval); activeIntervals = []; }
+
+    function switchGame(gameId) {
+      if (!audioCtx) audioCtx = new AudioContext();
+      activeGame = gameId; currentLevelIndex = 0; score = 0; restartCurrentGame();
+    }
+
+    function restartCurrentGame() {
+      clearAllIntervals(); updateLevelUI();
+      document.querySelectorAll('.game-container').forEach(c => c.classList.remove('active'));
+      document.getElementById(activeGame + '-game').classList.add('active');
+
+      if (activeGame === 'certificate') {
+        document.getElementById('global-controls').style.display = 'none';
+      } else {
+        document.getElementById('global-controls').style.display = 'flex';
+      }
+
+      if (activeGame === 'bubble') startBubbleGame();
+      if (activeGame === 'airplane') startAirplaneGame();
+      if (activeGame === 'maze') startMazeGame();
+      if (activeGame === 'unscramble') startUnscrambleGame();
+      if (activeGame === 'fillblank') startFillBlankGame();
+    }
+
+    function randomWrongLetter() {
+      let l = letters[Math.floor(Math.random() * letters.length)];
+      while(l === currentTarget) { l = letters[Math.floor(Math.random() * letters.length)]; }
+      return l;
+    }
+
+    // ================== ترتيب الحروف مع التلميح ==================
+    let unscrambleLevelComplete = false;
+    function startUnscrambleGame() {
+      unscrambleLevelComplete = false; let wordObj = advancedVocab[currentLevelIndex]; let userAnswer = [];
+      const area = document.getElementById('unscramble-area');
+      area.innerHTML = `
+        <div class="word-image">${wordObj.emoji}</div>
+        <div class="hint-text"><i data-lucide="lightbulb" style="width:16px; height:16px;"></i> Hint: ${wordObj.trans}</div>
+        <div class="answer-slots" id="answer-slots"></div>
+        <div class="scrambled-letters" id="scrambled-letters"></div>
+      `;
+      if (window.lucide) window.lucide.createIcons();
+
+      const slots = document.getElementById('answer-slots'); const lettersContainer = document.getElementById('scrambled-letters');
+      const wordLetters = wordObj.word.split(''); const shuffled = [...wordLetters].sort(() => Math.random() - 0.5);
+      wordLetters.forEach(() => { const slot = document.createElement('div'); slot.className = 'slot'; slots.appendChild(slot); });
+      shuffled.forEach((letter) => {
+        const btn = document.createElement('div'); btn.className = 'letter-tile'; btn.innerText = letter;
+        btn.onclick = () => {
+          if (btn.classList.contains('hidden') || unscrambleLevelComplete) return;
+          playLetterSound(letter); playSound('pop');
+          userAnswer.push(letter); btn.classList.add('hidden'); slots.children[userAnswer.length - 1].innerText = letter;
+          if (userAnswer.length === wordLetters.length) {
+            if (userAnswer.join('') === wordObj.word) {
+              unscrambleLevelComplete = true; playSound('success'); score += 20; updateLevelUI();
+              setTimeout(() => { if (currentLevelIndex < totalLevels - 1) nextLevel(); else showWinMessage(); }, 1200);
+            } else {
+              playSound('error'); score = Math.max(0, score - 5); updateLevelUI(); setTimeout(startUnscrambleGame, 1200);
+            }
+          }
+        };
+        lettersContainer.appendChild(btn);
+      });
+    }
+
+    // ================== إكمال الفراغ مع التلميح ==================
+    let fillblankLevelComplete = false;
+    function startFillBlankGame() {
+      fillblankLevelComplete = false; const vocab = advancedVocab[currentLevelIndex]; const area = document.getElementById('fillblank-area');
+      area.innerHTML = `
+        <div class="question-box" id="fillblank-question">${vocab.emoji} &nbsp;&nbsp; ${vocab.display.replace('_', '<span class="blank-space">؟</span>')}</div>
+        <div class="hint-text"><i data-lucide="help-circle" style="width:16px; height:16px;"></i> Hint: ${vocab.trans}</div>
+        <div class="options-container" id="fillblank-options"></div>
+      `;
+      if (window.lucide) window.lucide.createIcons();
+
+      const qBox = document.getElementById('fillblank-question'); const optsBox = document.getElementById('fillblank-options');
+      const options = [...vocab.options].sort(() => Math.random() - 0.5);
+      options.forEach(opt => {
+        const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerText = opt;
+        btn.onclick = () => {
+          if(fillblankLevelComplete) return; playLetterSound(opt);
+          if (opt === vocab.missing) {
+            fillblankLevelComplete = true; playSound('success'); qBox.innerHTML = `${vocab.emoji} &nbsp;&nbsp; ${vocab.display.replace('_', `<span style="color:var(--success)">${vocab.missing}</span>`)}`;
+            score += 15; updateLevelUI(); setTimeout(() => { if (currentLevelIndex < totalLevels - 1) nextLevel(); else showWinMessage(); }, 1200);
+          } else { playSound('error'); btn.style.background = 'var(--error)'; score = Math.max(0, score - 5); updateLevelUI(); }
+        };
+        optsBox.appendChild(btn);
+      });
+    }
+
+    // ================== لعبة الفقاعات ==================
+    let correctPops = 0; let bubbleLevelComplete = false;
+    function startBubbleGame() {
+      correctPops = 0; bubbleLevelComplete = false; currentTarget = advancedVocab[currentLevelIndex].missing;
+      document.getElementById('bubble-instruction').innerHTML = `فرقع فقاعتين تحملان الحرف <span style="color:#e74c3c;">( ${currentTarget} )</span><span class="en">Pop two bubbles with the letter ( ${currentTarget} )</span>`;
+      document.getElementById('bubble-area').innerHTML = ''; setTimeout(() => playLetterSound(currentTarget), 500);
+      const interval = setInterval(() => {
+        if (bubbleLevelComplete) return; const area = document.getElementById('bubble-area'); if (!area) return;
+        const wrapper = document.createElement('div'); wrapper.className = 'bubble-wrapper'; wrapper.style.left = Math.floor(Math.random() * (area.offsetWidth - 70)) + 'px'; wrapper.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        const inner = document.createElement('div'); inner.className = 'bubble-inner'; const letter = Math.random() < 0.4 ? currentTarget : randomWrongLetter(); inner.innerText = letter; wrapper.appendChild(inner);
+        wrapper.onclick = function() {
+          if (this.dataset.clicked || bubbleLevelComplete) return; this.dataset.clicked = "true"; playLetterSound(letter); this.style.animationPlayState = 'paused';
+          if (letter === currentTarget) {
+            playSound('success'); this.classList.add('popped-correct'); score += 10; updateLevelUI(); correctPops++;
+            if (correctPops >= 2) { bubbleLevelComplete = true; setTimeout(() => { if (currentLevelIndex < totalLevels - 1) nextLevel(); else showWinMessage(); }, 1200); }
+          } else { playSound('error'); this.classList.add('popped-wrong'); score = Math.max(0, score - 5); updateLevelUI(); }
+          setTimeout(() => { if(wrapper.parentNode) wrapper.remove(); }, 300);
+        };
+        area.appendChild(wrapper); setTimeout(() => { if (area.contains(wrapper)) wrapper.remove(); }, 6000);
+      }, 1200);
+      activeIntervals.push(interval);
+    }
+
+    // ================== لعبة الطائرة ==================
+    let planeY = 50, planeX = 10; let airplaneLevelComplete = false;
+    function startAirplaneGame() {
+      airplaneLevelComplete = false; currentTarget = advancedVocab[currentLevelIndex].missing;
+      document.getElementById('airplane-instruction').innerHTML = `طر نحو الغيمة التي تحمل الحرف <span style="color:#e74c3c;">( ${currentTarget} )</span><span class="en">Fly to the cloud with the letter ( ${currentTarget} )</span>`;
+      setTimeout(() => playLetterSound(currentTarget), 500); planeY = 50; planeX = 10;
+      const area = document.getElementById('airplane-area'); Array.from(area.children).forEach(child => { if(!child.classList.contains('controls')) child.remove(); });
+      const plane = document.createElement('div'); plane.id = 'plane'; plane.className = 'airplane'; 
+      plane.innerHTML = '<img src="https://raw.githubusercontent.com/bubblesinarabic/alphabets-audio/main/plane.svg" alt="طائرة">';
+      plane.style.top = planeY + '%'; plane.style.right = planeX + '%'; area.appendChild(plane);
+      activeIntervals.push(setInterval(spawnClouds, 2500)); activeIntervals.push(setInterval(checkAirplaneCollision, 50));
+    }
+    function movePlane(dx, dy) {
+      if(activeGame !== 'airplane' || airplaneLevelComplete) return; planeX += dx; planeY += dy;
+      if (planeY < 5) planeY = 5; if (planeY > 85) planeY = 85; if (planeX < 2) planeX = 2; if (planeX > 80) planeX = 80;
+      const plane = document.getElementById('plane'); if(plane) { plane.style.top = planeY + '%'; plane.style.right = planeX + '%'; }
+    }
+    function spawnClouds() {
+      if (airplaneLevelComplete) return; const area = document.getElementById('airplane-area'); if (!area) return;
+      const positions = [15, 50, 80]; const targetPos = Math.floor(Math.random() * 3); 
+      positions.forEach((pos, index) => {
+        const cloud = document.createElement('div'); cloud.className = 'cloud'; cloud.style.top = pos + '%'; cloud.style.left = '-120px';
+        const letter = (index === targetPos) ? currentTarget : randomWrongLetter(); cloud.innerHTML = `<span>${letter}</span>`; cloud.dataset.letter = letter; area.appendChild(cloud);
+        let leftPos = -120; const moveInterval = setInterval(() => { leftPos += 4; cloud.style.left = leftPos + 'px'; if (leftPos > area.offsetWidth + 50) { clearInterval(moveInterval); if (area.contains(cloud)) cloud.remove(); } }, 20);
+        activeIntervals.push(moveInterval); cloud.dataset.interval = moveInterval;
+      });
+    }
+    function checkAirplaneCollision() {
+      if (airplaneLevelComplete) return; const plane = document.getElementById('plane'); if (!plane) return;
+      const planeRect = plane.getBoundingClientRect(); const clouds = document.querySelectorAll('.cloud');
+      clouds.forEach(cloud => {
+        if (cloud.dataset.hit) return; const cloudRect = cloud.getBoundingClientRect(); const hitMargin = 15; 
+        if (planeRect.left + hitMargin < cloudRect.right && planeRect.right - hitMargin > cloudRect.left && planeRect.top + hitMargin < cloudRect.bottom && planeRect.bottom - hitMargin > cloudRect.top) {
+          cloud.dataset.hit = "true"; clearInterval(parseInt(cloud.dataset.interval)); playLetterSound(cloud.dataset.letter);
+          if (cloud.dataset.letter === currentTarget) {
+            airplaneLevelComplete = true; playSound('success'); cloud.style.background = "var(--success)"; cloud.querySelector('span').style.color = "white"; score += 10; updateLevelUI();
+            setTimeout(() => { if (currentLevelIndex < totalLevels - 1) nextLevel(); else showWinMessage(); }, 1200);
+          } else { playSound('error'); cloud.style.background = "var(--error)"; cloud.querySelector('span').style.color = "white"; score = Math.max(0, score - 5); updateLevelUI(); }
+          setTimeout(() => { if (cloud.parentNode) cloud.remove(); }, 400);
+        }
+      });
+    }
+
+    // ================== لعبة المتاهة ==================
+    let carX = 1, carY = 1; let mazeLevelComplete = false; let mazeLetters = [];
+    const mazeGrid = [
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,1,0,0,0,0,0,1,0,0,0,1],[1,0,1,0,1,0,1,1,1,0,1,0,1,0,1],[1,0,1,0,0,0,0,0,1,0,0,0,1,0,1],[1,0,1,1,1,1,1,0,1,1,1,1,1,0,1],
+      [1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],[1,1,1,1,1,0,1,1,1,1,1,0,1,1,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ];
+    function startMazeGame() {
+      mazeLevelComplete = false; currentTarget = advancedVocab[currentLevelIndex].missing;
+      document.getElementById('maze-instruction').innerHTML = `قد السيارة 🚗 لجمع الحرف <span style="color:#e74c3c;">( ${currentTarget} )</span><span class="en">Drive the car 🚗 to collect the letter ( ${currentTarget} )</span>`;
+      setTimeout(() => playLetterSound(currentTarget), 500); const container = document.getElementById('maze-grid-container'); container.innerHTML = '';
+      for (let y = 0; y < mazeGrid.length; y++) { for (let x = 0; x < mazeGrid[y].length; x++) { const cell = document.createElement('div'); cell.className = mazeGrid[y][x] === 1 ? 'maze-wall' : 'maze-path'; container.appendChild(cell); } }
+      carX = 1; carY = 1; const car = document.createElement('div'); car.id = 'maze-car'; car.className = 'maze-car'; car.innerText = '🚗'; car.style.left = (carX * 40) + 'px'; car.style.top = (carY * 40) + 'px'; container.appendChild(car);
+      let emptySpots = []; for (let y = 1; y < mazeGrid.length - 1; y++) { for (let x = 1; x < mazeGrid[y].length - 1; x++) { if (mazeGrid[y][x] === 0 && (x > 3 || y > 3)) { emptySpots.push({x, y}); } } } emptySpots.sort(() => Math.random() - 0.5);
+      mazeLetters = []; const lettersToPlace = [currentTarget, randomWrongLetter(), randomWrongLetter()].sort(() => Math.random() - 0.5);
+      for (let i = 0; i < 3; i++) { const spot = emptySpots[i]; const letEl = document.createElement('div'); letEl.className = 'maze-letter'; letEl.innerText = lettersToPlace[i]; letEl.style.left = (spot.x * 40) + 'px'; letEl.style.top = (spot.y * 40) + 'px'; container.appendChild(letEl); mazeLetters.push({ x: spot.x, y: spot.y, letter: lettersToPlace[i], el: letEl }); }
+    }
+    function moveCar(dx, dy) {
+      if (activeGame !== 'maze' || mazeLevelComplete) return; const newX = carX + dx; const newY = carY + dy;
+      if (newY >= 0 && newY < mazeGrid.length && newX >= 0 && newX < mazeGrid[0].length) {
+        if (mazeGrid[newY][newX] === 0) { carX = newX; carY = newY; const carEl = document.getElementById('maze-car'); let transform = carEl.style.transform; if (dx === -1) transform = 'scaleX(1)'; else if (dx === 1) transform = 'scaleX(-1)'; carEl.style.transform = transform; carEl.style.left = (carX * 40) + 'px'; carEl.style.top = (carY * 40) + 'px'; checkMazeCollision(); }
+      }
+    }
+    function checkMazeCollision() {
+      for (let i = 0; i < mazeLetters.length; i++) {
+        const ml = mazeLetters[i];
+        if (ml.x === carX && ml.y === carY) {
+          if (ml.el.style.display === 'none') continue; playLetterSound(ml.letter);
+          if (ml.letter === currentTarget) { mazeLevelComplete = true; playSound('success'); ml.el.style.display = 'none'; score += 20; updateLevelUI(); document.getElementById('maze-car').style.transform += ' scale(1.5)'; setTimeout(() => { if (currentLevelIndex < totalLevels - 1) nextLevel(); else showWinMessage(); }, 1200); }
+          else { playSound('error'); score = Math.max(0, score - 5); updateLevelUI(); ml.el.style.display = 'none'; }
+        }
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (activeGame === 'airplane' && !airplaneLevelComplete) {
+        if (e.key === 'ArrowUp') { movePlane(0, -10); e.preventDefault(); } if (e.key === 'ArrowDown') { movePlane(0, 10); e.preventDefault(); }
+        if (e.key === 'ArrowLeft') { movePlane(10, 0); e.preventDefault(); } if (e.key === 'ArrowRight') { movePlane(-10, 0); e.preventDefault(); } 
+      }
+      if (activeGame === 'maze' && !mazeLevelComplete) {
+        if (e.key === 'ArrowUp') { moveCar(0, -1); e.preventDefault(); } if (e.key === 'ArrowDown') { moveCar(0, 1); e.preventDefault(); }
+        if (e.key === 'ArrowLeft') { moveCar(-1, 0); e.preventDefault(); } if (e.key === 'ArrowRight') { moveCar(1, 0); e.preventDefault(); } 
+      }
+    });
+
+    // ================== برمجة الشهادة ==================
+    function updateCertName(name) {
+      document.getElementById('cert-name-display').innerText = name.trim() === "" ? "اسم البطل / Hero Name" : name;
+    }
+
+    function handleCertUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) { document.getElementById('cert-photo').src = e.target.result; };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    let videoStream = null;
+    async function openCamera() {
+      const modal = document.getElementById('camera-modal');
+      const video = document.getElementById('camera-video');
+      modal.style.display = 'flex';
+      try {
+        videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+        video.srcObject = videoStream;
+      } catch (err) { alert("عذراً، لا يمكن الوصول للكاميرا / Camera access denied"); closeCamera(); }
+    }
+
+    function captureCamera() {
+      const video = document.getElementById('camera-video');
+      if (!videoStream) return;
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      document.getElementById('cert-photo').src = canvas.toDataURL('image/png');
+      closeCamera();
+    }
+
+    function closeCamera() {
+      document.getElementById('camera-modal').style.display = 'none';
+      if (videoStream) { videoStream.getTracks().forEach(track => track.stop()); videoStream = null; }
+    }
+
+    function downloadCertificate() {
+      const certElement = document.getElementById('certificate-content');
+      html2canvas(certElement, { scale: 2, useCORS: true, backgroundColor: null }).then(canvas => {
+        const link = document.createElement('a'); link.download = 'certificate.png';
+        link.href = canvas.toDataURL('image/png'); link.click();
+      }).catch(err => { console.error("خطأ أثناء تحميل الشهادة:", err); alert("حدث خطأ أثناء إعداد الشهادة للتحميل."); });
+    }
+
+    window.onload = () => { 
+      createBackgroundBubbles(); 
+      restartCurrentGame(); 
+      resetIdleTimer();
+      
+      try {
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          window.lucide.createIcons();
+        }
+      } catch (e) {
+        console.error("Lucide Error", e);
+      }
+    };
+  </script>
+</body>
+</html>

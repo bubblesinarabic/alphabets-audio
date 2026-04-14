@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البطاقات التعليمية - أبطال الحروف</title>
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --primary: #FFB020; 
+            --secondary: #2C3E50; 
+            --accent: #E74C3C; 
+            --blue: #3498DB; 
+            --success: #27ae60; 
+            --purple: #9B59B6;
+            --lucid-grey: #F4F7F9;
+            --border: #D5DCE0;
+        }
+        
+        body { 
+            font-family: 'Almarai', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            min-height: 100vh; 
+            background-color: transparent; 
+            overflow-x: hidden;
+        }
+
+        /* الخلفية المتحركة */
+        .floating-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%); overflow: hidden; margin: 0; padding: 0; }
+        .floating-bg li { position: absolute; display: flex; justify-content: center; align-items: center; list-style: none; background: rgba(255, 255, 255, 0.25); animation: floatUp 25s linear infinite; bottom: -150px; border-radius: 25%; font-family: 'Almarai', sans-serif; font-weight: 800; color: rgba(255, 255, 255, 0.7); user-select: none; }
+        .floating-bg li:nth-child(1) { left: 10%; width: 80px; height: 80px; animation-delay: 0s; font-size: 40px; }
+        .floating-bg li:nth-child(2) { left: 25%; width: 60px; height: 60px; animation-delay: 2s; animation-duration: 12s; font-size: 30px; }
+        .floating-bg li:nth-child(3) { left: 70%; width: 100px; height: 100px; animation-delay: 4s; font-size: 55px; }
+        .floating-bg li:nth-child(4) { left: 40%; width: 70px; height: 70px; animation-delay: 0s; animation-duration: 18s; font-size: 35px; }
+        .floating-bg li:nth-child(5) { left: 65%; width: 50px; height: 50px; animation-delay: 0s; font-size: 25px; }
+        @keyframes floatUp { 0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 25%; } 100% { transform: translateY(-120vh) rotate(720deg); opacity: 0; border-radius: 50%; } }
+
+        /* ترويسة التطبيق */
+        .header { background: #ffffff; width: 95%; max-width: 900px; padding: 15px 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 20px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
+        .header h1 { margin: 0; color: var(--secondary); font-size: 30px; display: flex; align-items: center; gap: 15px; }
+        .header-logo { height: 50px; border-radius: 10px; background: var(--lucid-grey); padding: 5px; }
+        .back-btn { background: var(--accent); color: white; border: none; padding: 10px 20px; font-family: 'Almarai'; font-size: 18px; font-weight: bold; border-radius: 12px; cursor: pointer; text-decoration: none; box-shadow: 0 4px 0 #c0392b; }
+        .back-btn:active { transform: translateY(4px); box-shadow: 0 0 0; }
+
+        /* منطقة البطاقة ثلاثية الأبعاد - الحجم الأكبر */
+        .scene { width: 500px; height: 550px; perspective: 1000px; margin: 40px 0 20px 0; }
+        .card { width: 100%; height: 100%; position: relative; transition: transform 0.8s; transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card__face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; border: 4px solid var(--border); }
+        .card__face--front { background-color: #ffffff; z-index: 2; transform: rotateY(0deg); }
+        .card__face--back { background-color: #F8FAFC; transform: rotateY(180deg); }
+        
+        /* محتوى البطاقة */
+        .main-letter { font-size: 240px; font-weight: 800; color: var(--secondary); margin-bottom: 30px; line-height: 1; }
+        .haraka-row { display: flex; justify-content: space-evenly; width: 100%; padding: 0 10px; box-sizing: border-box; }
+        
+        /* الصناديق الواسعة لمنع قص الحروف */
+        .haraka-box { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            background: white; 
+            padding: 25px 20px; 
+            min-width: 100px; 
+            border-radius: 25px; 
+            border: 2px solid var(--border); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); 
+        }
+        
+        .haraka-letter { 
+            font-size: 70px; 
+            font-weight: 800; 
+            color: var(--blue); 
+            margin-bottom: 20px; 
+            line-height: 1.2; 
+        }
+        
+        .flip-hint { position: absolute; bottom: 20px; color: #95a5a6; font-size: 18px; font-weight: bold; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+        /* أزرار الصوت */
+        .sound-btn { background: var(--primary); border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #d99519; transition: 0.2s; position: relative; z-index: 10; }
+        .sound-btn:active { transform: translateY(4px); box-shadow: 0 0 0; }
+        .sound-btn.small { width: 45px; height: 45px; box-shadow: 0 3px 0 #d99519; } 
+        .sound-btn.small:active { transform: translateY(3px); box-shadow: 0 0 0; }
+        
+        .speaker-icon { width: 25px; height: 25px; fill: white; pointer-events: none; }
+        .small .speaker-icon { width: 22px; height: 22px; pointer-events: none; }
+
+        /* أزرار التنقل */
+        .nav-controls { display: flex; gap: 30px; margin-bottom: 30px; }
+        .nav-arrow { background: var(--secondary); color: white; border: none; font-size: 24px; font-weight: bold; font-family: 'Almarai'; padding: 15px 30px; border-radius: 15px; cursor: pointer; box-shadow: 0 6px 0 #1a252f; transition: 0.2s; min-width: 140px; }
+        .nav-arrow:active { transform: translateY(6px); box-shadow: 0 0 0; }
+
+        /* شبكة الحروف السريعة */
+        .letters-grid { background: white; padding: 20px; border-radius: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 900px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .grid-btn { font-family: 'Almarai'; font-size: 24px; font-weight: bold; width: 55px; height: 55px; border-radius: 12px; border: 2px solid var(--border); background: var(--lucid-grey); color: var(--secondary); cursor: pointer; transition: 0.2s; }
+        .grid-btn:hover { background: var(--blue); color: white; border-color: var(--blue); }
+        .grid-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 0 #d99519; transform: translateY(-4px); }
+
+        /* رسالة التنبيه (Toast) */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: var(--accent);
+            color: #fff;
+            text-align: center;
+            border-radius: 10px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 18px;
+            font-family: 'Almarai', sans-serif;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    </style>
+</head>
+<body>
+
+<ul class="floating-bg">
+    <li>أ</li><li>ب</li><li>ت</li><li>ث</li><li>ج</li><li>ح</li><li>خ</li><li>د</li><li>ذ</li><li>ر</li>
+</ul>
+
+<div class="header">
+    <h1>
+        <img src="https://raw.githubusercontent.com/bubblesinarabic/alphabets-audio/main/logo.png" alt="شعار" class="header-logo" onerror="this.style.display='none'">
+        البطاقات التعليمية
+    </h1>
+    <a href="index.html" class="back-btn">العودة للألعاب 🏠</a>
+</div>
+
+<div class="scene">
+    <div class="card" id="flashcard" onclick="flipCard()">
+        <div class="card__face card__face--front">
+            <div class="main-letter" id="front-letter">أ</div>
+            <button class="sound-btn" onclick="playBaseAudio(event)">
+                <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2V15H6L11 19V5Z M15.54 8.46a5 5 0 0 1 0 7.07 M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+            </button>
+            <div class="flip-hint">👆 اضغط للقلب</div>
+        </div>
+
+        <div class="card__face card__face--back">
+            <h3 style="color: var(--secondary); margin-top: 0; font-size: 26px;">استمع للحركات</h3>
+            <div class="haraka-row">
+                <div class="haraka-box">
+                    <span class="haraka-letter" id="letter-fatha" style="color:#E74C3C;">أَ</span>
+                    <button class="sound-btn small" style="background:#E74C3C; box-shadow:0 3px 0 #c0392b;" onclick="playHarakaAudio(event, 'fatha')">
+                        <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2V15H6L11 19V5Z M15.54 8.46a5 5 0 0 1 0 7.07 M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                    </button>
+                </div>
+                <div class="haraka-box">
+                    <span class="haraka-letter" id="letter-kasra" style="color:#3498DB;">أِ</span>
+                    <button class="sound-btn small" style="background:#3498DB; box-shadow:0 3px 0 #2980b9;" onclick="playHarakaAudio(event, 'kasra')">
+                        <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2V15H6L11 19V5Z M15.54 8.46a5 5 0 0 1 0 7.07 M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                    </button>
+                </div>
+                <div class="haraka-box">
+                    <span class="haraka-letter" id="letter-damma" style="color:#9B59B6;">أُ</span>
+                    <button class="sound-btn small" style="background:#9B59B6; box-shadow:0 3px 0 #8e44ad;" onclick="playHarakaAudio(event, 'damma')">
+                        <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2V15H6L11 19V5Z M15.54 8.46a5 5 0 0 1 0 7.07 M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="flip-hint" style="bottom: 10px;">👆 اضغط للرجوع</div>
+        </div>
+    </div>
+</div>
+
+<div class="nav-controls">
+    <button class="nav-arrow" onclick="prevCard()">◀ السابق</button>
+    <button class="nav-arrow" onclick="nextCard()">التالي ▶</button>
+</div>
+
+<div class="letters-grid" id="letters-grid"></div>
+
+<div id="toast">عذراً، الملف الصوتي غير متوفر حالياً 🔕</div>
+
+<script>
+    const RAW_URL = "https://raw.githubusercontent.com/bubblesinarabic/alphabets-audio/main/";
+    
+    // تم ترتيب الحروف وإضافة استثناء الثاء بنجاح
+    const letterData = [
+        { char: 'أ', name: 'alif' }, 
+        { char: 'ب', name: 'baa' }, 
+        { char: 'ت', name: 'taa' }, 
+        { char: 'ث', name: 'thaa', customUrls: { damma: RAW_URL + 'thou-damma.mp3' } }, // تمت إعادة إضافة الاستثناء هنا!
+        { char: 'ج', name: 'jeem' }, { char: 'ح', name: 'haa' }, { char: 'خ', name: 'kha' }, { char: 'د', name: 'dal' },
+        { char: 'ذ', name: 'thaal' }, { char: 'ر', name: 'raa' }, { char: 'ز', name: 'zay' }, { char: 'س', name: 'seen' },
+        { char: 'ش', name: 'sheen' }, { char: 'ص', name: 'saad' }, { char: 'ض', name: 'daad' }, 
+        { char: 'ط', name: 'taa_heavy' }, 
+        { char: 'ظ', name: 'zaa_heavy' }, 
+        { char: 'ع', name: 'ayn' }, { char: 'غ', name: 'ghayn' }, { char: 'ف', name: 'faa' },
+        { char: 'ق', name: 'qaaf' }, { char: 'ك', name: 'kaaf' }, { char: 'ل', name: 'laam' }, { char: 'م', name: 'meem' },
+        { char: 'ن', name: 'noon' }, { char: 'هـ', name: 'haa_light' }, { char: 'و', name: 'waw' }, { char: 'ي', name: 'yaa' }
+    ];
+
+    let currentIndex = 0;
+    let audioPlayer = new Audio();
+
+    function buildGrid() {
+        const grid = document.getElementById('letters-grid');
+        grid.innerHTML = '';
+        letterData.forEach((item, index) => {
+            let btn = document.createElement('button');
+            btn.className = `grid-btn ${index === currentIndex ? 'active' : ''}`;
+            btn.innerText = item.char;
+            btn.onclick = () => { goToCard(index); };
+            grid.appendChild(btn);
+        });
+    }
+
+    function updateCardUI() {
+        const data = letterData[currentIndex];
+        const card = document.getElementById('flashcard');
+        
+        if(card.classList.contains('is-flipped')) {
+            card.classList.remove('is-flipped');
+            setTimeout(applyText, 300);
+        } else {
+            applyText();
+        }
+
+        function applyText() {
+            document.getElementById('front-letter').innerText = data.char;
+            document.getElementById('letter-fatha').innerText = data.char + 'َ';
+            document.getElementById('letter-kasra').innerText = (data.char === 'أ') ? 'إِ' : data.char + 'ِ';
+            document.getElementById('letter-damma').innerText = data.char + 'ُ';
+        }
+
+        document.querySelectorAll('.grid-btn').forEach((btn, idx) => {
+            btn.classList.toggle('active', idx === currentIndex);
+        });
+    }
+
+    function nextCard() { currentIndex = (currentIndex + 1) % letterData.length; updateCardUI(); }
+    function prevCard() { currentIndex = (currentIndex - 1 + letterData.length) % letterData.length; updateCardUI(); }
+    function goToCard(index) { if(currentIndex === index) return; currentIndex = index; updateCardUI(); }
+    function flipCard() { document.getElementById('flashcard').classList.toggle('is-flipped'); }
+
+    // دالة إظهار التنبيه
+    function showToast() {
+        var toast = document.getElementById("toast");
+        toast.className = "show";
+        setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+    }
+
+    // دالة تشغيل الرابط المباشر مع "كسر الكاش"
+    function playAudioUrl(url) {
+        // إضافة وقت اللحظة الحالية في نهاية الرابط لضمان جلب النسخة الأحدث
+        const cacheBuster = "?v=" + new Date().getTime();
+        audioPlayer.src = url + cacheBuster;
+        
+        audioPlayer.play().catch(e => {
+            console.log("Audio not found: " + url);
+            showToast();
+        });
+    }
+
+    function playBaseAudio(event) {
+        event.stopPropagation();
+        const data = letterData[currentIndex];
+        
+        let url = RAW_URL + data.name + ".mp3";
+        if (data.customUrls && data.customUrls.base) {
+            url = data.customUrls.base;
+        }
+        
+        playAudioUrl(url);
+    }
+
+    function playHarakaAudio(event, haraka) {
+        event.stopPropagation();
+        const data = letterData[currentIndex];
+        
+        let url = RAW_URL + data.name + "-" + haraka + ".mp3";
+        if (data.customUrls && data.customUrls[haraka]) {
+            url = data.customUrls[haraka];
+        }
+        
+        playAudioUrl(url);
+    }
+
+    window.onload = () => { buildGrid(); updateCardUI(); };
+
+    window.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowLeft') nextCard();
+        if(e.key === 'ArrowRight') prevCard();
+        if(e.key === ' ') { e.preventDefault(); flipCard(); }
+    });
+</script>
+</body>
+</html>
