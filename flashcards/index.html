@@ -15,7 +15,6 @@
             --purple: #9B59B6;
             --lucid-grey: #F4F7F9;
             --border: #D5DCE0;
-            --card-shadow: 0 15px 35px rgba(0,0,0,0.18);
             --soft-shadow: 0 10px 20px rgba(0,0,0,0.10);
         }
         
@@ -34,7 +33,6 @@
             overflow-x: hidden;
         }
 
-        /* الخلفية المتحركة */
         .floating-bg { 
             position: fixed; 
             top: 0; 
@@ -75,7 +73,6 @@
             100% { transform: translateY(-120vh) rotate(720deg); opacity: 0; border-radius: 50%; } 
         }
 
-        /* ترويسة الصفحة */
         .header { 
             background: #ffffff; 
             width: 95%; 
@@ -127,7 +124,6 @@
             box-shadow: 0 0 0;
         }
 
-        /* منطقة البطاقة ثلاثية الأبعاد */
         .scene { 
             width: 500px; 
             height: 550px; 
@@ -246,7 +242,6 @@
             100% { opacity: 0.5; } 
         }
 
-        /* أزرار الصوت */
         .sound-btn { 
             background: var(--primary); 
             border: none; 
@@ -260,7 +255,7 @@
             box-shadow: 0 4px 0 #d99519; 
             transition: 0.2s; 
             position: relative; 
-            z-index: 10; 
+            z-index: 20; 
         }
 
         .sound-btn:active { 
@@ -292,7 +287,6 @@
             pointer-events: none; 
         }
 
-        /* أزرار التنقل داخل البطاقات */
         .nav-controls { 
             display: flex; 
             gap: 30px; 
@@ -319,7 +313,6 @@
             box-shadow: 0 0 0; 
         }
 
-        /* شبكة الحروف */
         .letters-grid { 
             background: white; 
             padding: 20px; 
@@ -361,7 +354,6 @@
             transform: translateY(-4px); 
         }
 
-        /* رسالة التنبيه */
         #toast {
             visibility: hidden;
             min-width: 250px;
@@ -481,14 +473,14 @@
         <img src="https://raw.githubusercontent.com/bubblesinarabic/alphabets-audio/main/logo.png" alt="شعار" class="header-logo" onerror="this.style.display='none'">
         البطاقات التعليمية
     </h1>
-    <a href="./" class="back-btn">العودة للصفحة الرئيسية 🏠</a>
+    <a href="./index.html" class="back-btn">العودة للصفحة الرئيسية 🏠</a>
 </div>
 
 <div class="scene">
     <div class="card" id="flashcard" onclick="flipCard(event)">
         <div class="card__face card__face--front">
             <div class="main-letter" id="front-letter">أ</div>
-            <button class="sound-btn" onclick="playBaseAudio(event)">
+            <button type="button" class="sound-btn" onclick="playBaseAudio(event)">
                 <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2V15H6L11 19V5Z M15.54 8.46a5 5 0 0 1 0 7.07 M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
             </button>
             <div class="flip-hint">👆 اضغط للقلب</div>
@@ -499,19 +491,19 @@
             <div class="haraka-row">
                 <div class="haraka-box">
                     <span class="haraka-letter" id="letter-fatha" style="color:#E74C3C;">أَ</span>
-                    <button class="sound-btn small" style="background:#E74C3C; box-shadow:0 3px 0 #c0392b;" onclick="playHarakaAudio(event, 'fatha')">
+                    <button type="button" class="sound-btn small" style="background:#E74C3C; box-shadow:0 3px 0 #c0392b;" onclick="playHarakaAudio(event, 'fatha')">
                         <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2V15H6L11 19V5Z M15.54 8.46a5 5 0 0 1 0 7.07 M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
                     </button>
                 </div>
                 <div class="haraka-box">
                     <span class="haraka-letter" id="letter-kasra" style="color:#3498DB;">أِ</span>
-                    <button class="sound-btn small" style="background:#3498DB; box-shadow:0 3px 0 #2980b9;" onclick="playHarakaAudio(event, 'kasra')">
+                    <button type="button" class="sound-btn small" style="background:#3498DB; box-shadow:0 3px 0 #2980b9;" onclick="playHarakaAudio(event, 'kasra')">
                         <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2V15H6L11 19V5Z M15.54 8.46a5 5 0 0 1 0 7.07 M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
                     </button>
                 </div>
                 <div class="haraka-box">
                     <span class="haraka-letter" id="letter-damma" style="color:#9B59B6;">أُ</span>
-                    <button class="sound-btn small" style="background:#9B59B6; box-shadow:0 3px 0 #8e44ad;" onclick="playHarakaAudio(event, 'damma')">
+                    <button type="button" class="sound-btn small" style="background:#9B59B6; box-shadow:0 3px 0 #8e44ad;" onclick="playHarakaAudio(event, 'damma')">
                         <svg class="speaker-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2V15H6L11 19V5Z M15.54 8.46a5 5 0 0 1 0 7.07 M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
                     </button>
                 </div>
@@ -522,8 +514,8 @@
 </div>
 
 <div class="nav-controls">
-    <button class="nav-arrow" onclick="prevCard()">◀ السابق</button>
-    <button class="nav-arrow" onclick="nextCard()">التالي ▶</button>
+    <button type="button" class="nav-arrow" onclick="prevCard()">◀ السابق</button>
+    <button type="button" class="nav-arrow" onclick="nextCard()">التالي ▶</button>
 </div>
 
 <div class="letters-grid" id="letters-grid"></div>
@@ -554,8 +546,10 @@
     function buildGrid() {
         const grid = document.getElementById('letters-grid');
         grid.innerHTML = '';
+
         letterData.forEach((item, index) => {
-            let btn = document.createElement('button');
+            const btn = document.createElement('button');
+            btn.type = 'button';
             btn.className = `grid-btn ${index === currentIndex ? 'active' : ''}`;
             btn.innerText = item.char;
             btn.onclick = () => { goToCard(index); };
@@ -567,7 +561,7 @@
         const data = letterData[currentIndex];
         const card = document.getElementById('flashcard');
         
-        if(card.classList.contains('is-flipped')) {
+        if (card.classList.contains('is-flipped')) {
             card.classList.remove('is-flipped');
             setTimeout(applyText, 300);
         } else {
@@ -597,30 +591,39 @@
     }
 
     function goToCard(index) { 
-        if(currentIndex === index) return; 
+        if (currentIndex === index) return; 
         currentIndex = index; 
         updateCardUI(); 
     }
 
-    function flipCard(event) { 
-        if (event) event.stopPropagation();
-        document.getElementById('flashcard').classList.toggle('is-flipped'); 
+    function flipCard(event) {
+        if (event) {
+            const clickedInteractive = event.target.closest('.sound-btn, .back-btn, .nav-arrow, .grid-btn');
+            if (clickedInteractive) return;
+            event.stopPropagation();
+        }
+        document.getElementById('flashcard').classList.toggle('is-flipped');
     }
 
     function showToast() {
-        var toast = document.getElementById("toast");
+        const toast = document.getElementById("toast");
         toast.className = "show";
-        setTimeout(function(){ 
-            toast.className = toast.className.replace("show", ""); 
+        setTimeout(() => {
+            toast.className = toast.className.replace("show", "");
         }, 3000);
     }
 
     function playAudioUrl(url) {
+        try {
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+        } catch (e) {}
+
         const cacheBuster = "?v=" + new Date().getTime();
         audioPlayer.src = url + cacheBuster;
         
         audioPlayer.play().catch(e => {
-            console.log("Audio not found: " + url);
+            console.log("Audio not found: " + url, e);
             showToast();
         });
     }
@@ -655,9 +658,9 @@
     };
 
     window.addEventListener('keydown', (e) => {
-        if(e.key === 'ArrowLeft') nextCard();
-        if(e.key === 'ArrowRight') prevCard();
-        if(e.key === ' ') { 
+        if (e.key === 'ArrowLeft') nextCard();
+        if (e.key === 'ArrowRight') prevCard();
+        if (e.key === ' ') { 
             e.preventDefault(); 
             flipCard(); 
         }
