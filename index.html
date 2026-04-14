@@ -36,7 +36,6 @@
       background-color: transparent;
     }
 
-    /* الخلفية المتحركة */
     .floating-bg {
       position: fixed;
       inset: 0;
@@ -60,6 +59,12 @@
       font-weight: 800;
       color: rgba(255, 255, 255, 0.72);
       user-select: none;
+    }
+
+    .floating-bg li svg {
+      width: 56%;
+      height: 56%;
+      stroke-width: 2.2;
     }
 
     .floating-bg li:nth-child(1)  { left: 8%;  width: 90px;  height: 90px;  animation-delay: 0s;  font-size: 42px; }
@@ -110,6 +115,18 @@
       font-size: 26px;
       font-weight: 800;
       flex-wrap: wrap;
+    }
+
+    .brand-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-wrap svg {
+      width: 30px;
+      height: 30px;
+      stroke-width: 2.4;
     }
 
     .top-bar small {
@@ -207,6 +224,19 @@
       font-size: 15px;
     }
 
+    .eyebrow svg,
+    .section-title svg,
+    .btn svg,
+    .module-icon svg,
+    .stat-box .icon svg {
+      flex-shrink: 0;
+    }
+
+    .eyebrow svg {
+      width: 18px;
+      height: 18px;
+    }
+
     h1 {
       margin: 0;
       color: var(--secondary);
@@ -243,6 +273,12 @@
       transition: 0.2s ease;
     }
 
+    .btn svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2.4;
+    }
+
     .btn:active {
       transform: translateY(6px);
       box-shadow: 0 0 0;
@@ -268,8 +304,17 @@
     }
 
     .stat-box .icon {
-      font-size: 36px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       margin-bottom: 8px;
+      color: var(--secondary);
+    }
+
+    .stat-box .icon svg {
+      width: 34px;
+      height: 34px;
+      stroke-width: 2.2;
     }
 
     .stat-box strong {
@@ -292,6 +337,12 @@
       color: var(--secondary);
       font-size: 30px;
       margin: 0 0 18px;
+    }
+
+    .section-title svg {
+      width: 28px;
+      height: 28px;
+      stroke-width: 2.2;
     }
 
     .modules-grid {
@@ -320,9 +371,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 42px;
       background: var(--lucid-grey);
       border: 3px solid #e7ecef;
+      color: var(--secondary);
+    }
+
+    .module-icon svg {
+      width: 38px;
+      height: 38px;
+      stroke-width: 2.2;
     }
 
     .module-card h3 {
@@ -455,19 +512,22 @@
   <ul class="floating-bg">
     <li>أ</li>
     <li>ب</li>
-    <li>🌟</li>
+    <li><i data-lucide="sparkles"></i></li>
     <li>ت</li>
-    <li>📚</li>
+    <li><i data-lucide="book-open"></i></li>
     <li>ج</li>
-    <li>🎮</li>
+    <li><i data-lucide="gamepad-2"></i></li>
     <li>ي</li>
-    <li>🧠</li>
+    <li><i data-lucide="brain"></i></li>
     <li>م</li>
   </ul>
 
   <div class="hub-card">
     <div class="top-bar">
-      <span>أبطال الحروف 🚀</span>
+      <span class="brand-wrap">
+        <i data-lucide="book-open"></i>
+        <span>أبطال الحروف</span>
+      </span>
       <small>البوابة الرئيسية للتعلم التفاعلي</small>
     </div>
 
@@ -483,8 +543,13 @@
     <main class="main-content">
       <section class="hero">
         <div class="hero-panel">
-          <span class="eyebrow">✨ منصة موحدة - تجربة مرئية ممتعة</span>
+          <span class="eyebrow">
+            <i data-lucide="sparkles"></i>
+            <span>منصة موحدة - تجربة مرئية ممتعة</span>
+          </span>
+
           <h1>ابدأ رحلة تعلم الحروف العربية من مكان واحد</h1>
+
           <p>
             هذه الصفحة تجمع جميع الأنشطة التعليمية في واجهة واحدة منسجمة:
             بطاقات، ألعاب، تتبع، تعلم جماعي، ومجموعات الحروف. تم تصميمها لتكون
@@ -492,27 +557,44 @@
           </p>
 
           <div class="hero-actions">
-            <a class="btn btn-green" href="./flashcards-with-images/">ابدأ بالبطاقات المصورة 🖼️</a>
-            <a class="btn btn-blue" href="./games/">ادخل إلى الألعاب 🎮</a>
-            <a class="btn btn-purple" href="./let-learn-together-games/">تعلم جماعي 👩‍🏫</a>
+            <a class="btn btn-green" href="./flashcards-with-images/">
+              <i data-lucide="images"></i>
+              <span>ابدأ بالبطاقات المصورة</span>
+            </a>
+
+            <a class="btn btn-blue" href="./games/">
+              <i data-lucide="gamepad-2"></i>
+              <span>ادخل إلى الألعاب</span>
+            </a>
+
+            <a class="btn btn-purple" href="./let-learn-together-games/">
+              <i data-lucide="users"></i>
+              <span>تعلم جماعي</span>
+            </a>
           </div>
         </div>
 
         <div class="stats-panel">
           <div class="stat-box">
-            <div class="icon">📚</div>
+            <div class="icon">
+              <i data-lucide="layers"></i>
+            </div>
             <strong>5 وحدات</strong>
             <span>جميع الأنشطة متصلة من صفحة رئيسية واحدة</span>
           </div>
 
           <div class="stat-box">
-            <div class="icon">🔊</div>
+            <div class="icon">
+              <i data-lucide="volume-2"></i>
+            </div>
             <strong>صوت + تفاعل</strong>
             <span>تعلم متعدد الوسائط لدعم النطق والتذكر</span>
           </div>
 
           <div class="stat-box">
-            <div class="icon">🏫</div>
+            <div class="icon">
+              <i data-lucide="users"></i>
+            </div>
             <strong>جاهز للفصل</strong>
             <span>مناسب للتعلم الفردي والجماعي داخل الصف</span>
           </div>
@@ -520,46 +602,61 @@
       </section>
 
       <section>
-        <h2 class="section-title">🧩 الوحدات التعليمية</h2>
+        <h2 class="section-title">
+          <i data-lucide="layers"></i>
+          <span>الوحدات التعليمية</span>
+        </h2>
 
         <div class="modules-grid">
           <article class="module-card">
-            <div class="module-icon">🖼️</div>
+            <div class="module-icon">
+              <i data-lucide="images"></i>
+            </div>
             <h3>البطاقات مع الصور</h3>
             <p>مدخل بصري مناسب للمبتدئين لربط الحرف بالصورة والصوت والمعنى.</p>
             <a class="module-link bg-primary" href="./flashcards-with-images/">فتح الوحدة</a>
           </article>
 
           <article class="module-card">
-            <div class="module-icon">🔤</div>
+            <div class="module-icon">
+              <i data-lucide="book-open"></i>
+            </div>
             <h3>البطاقات</h3>
             <p>مراجعة مباشرة للحروف العربية ضمن تجربة مركزة وسهلة وسريعة.</p>
             <a class="module-link bg-blue" href="./flashcards/">فتح الوحدة</a>
           </article>
 
           <article class="module-card">
-            <div class="module-icon">🎮</div>
+            <div class="module-icon">
+              <i data-lucide="gamepad-2"></i>
+            </div>
             <h3>الألعاب</h3>
             <p>أنشطة تفاعلية لرفع الدافعية وتحويل التكرار إلى ممارسة ممتعة.</p>
             <a class="module-link bg-red" href="./games/">فتح الوحدة</a>
           </article>
 
           <article class="module-card">
-            <div class="module-icon">👩‍🏫</div>
+            <div class="module-icon">
+              <i data-lucide="users"></i>
+            </div>
             <h3>لنتعلم معًا</h3>
             <p>مساحة تعاونية بأنشطة جماعية مستوحاة من اللعب والتحدي الصفّي.</p>
             <a class="module-link bg-purple" href="./let-learn-together-games/">فتح الوحدة</a>
           </article>
 
           <article class="module-card">
-            <div class="module-icon">🧠</div>
+            <div class="module-icon">
+              <i data-lucide="brain"></i>
+            </div>
             <h3>مجموعات الحروف</h3>
             <p>تنظيم الحروف في مجموعات يساعد على اكتشاف الأنماط وتقوية التمييز البصري.</p>
             <a class="module-link bg-green" href="./letter-groups/">فتح الوحدة</a>
           </article>
 
           <article class="module-card">
-            <div class="module-icon">🚀</div>
+            <div class="module-icon">
+              <i data-lucide="rocket"></i>
+            </div>
             <h3>مسار البدء السريع</h3>
             <p>ابدأ بالبطاقات المصورة، ثم البطاقات، ثم الألعاب، وبعدها التعلم الجماعي.</p>
             <a class="module-link bg-secondary" href="./flashcards-with-images/">ابدأ الآن</a>
@@ -568,7 +665,10 @@
       </section>
 
       <section class="path-panel">
-        <h2 class="section-title">🎯 المسار المقترح للتعلم</h2>
+        <h2 class="section-title">
+          <i data-lucide="target"></i>
+          <span>المسار المقترح للتعلم</span>
+        </h2>
 
         <div class="path-steps">
           <div class="step">
@@ -609,5 +709,9 @@
     </main>
   </div>
 
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 </html>
